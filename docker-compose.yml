@@ -1,0 +1,12 @@
+services:
+
+  eureka-server:
+    container_name: bank-eureka-server
+    build:
+      context: .
+      dockerfile: bank-eureka-server/Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - bank-network
+
