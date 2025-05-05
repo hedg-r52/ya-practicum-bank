@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: global-config
+  config:
+    activate:
+      on-profile: default
+
+logging:
+  level:
+    root: INFO
