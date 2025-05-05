@@ -10,3 +10,18 @@ services:
     networks:
       - bank-network
 
+  config-server:
+    container_name: bank-config-server
+    build:
+      context: .
+      dockerfile: bank-config-server/Dockerfile
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka-server
+    networks:
+      - bank-network
+
+networks:
+  bank-network:
+      driver: bridge

@@ -2,7 +2,7 @@ rootProject.name = 'ya-practicum-bank'
 
 // Subprojects
 include 'bank-eureka-server'
-//include 'bank-config-server'
+include 'bank-config-server'
 //include 'bank-gateway'
 //include 'bank-auth-server'
 //include 'bank-front-ui'
