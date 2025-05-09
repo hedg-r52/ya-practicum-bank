@@ -1,0 +1,19 @@
+server:
+  port: 8083
+
+spring:
+  thymeleaf:
+    cache: false
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: bank-front-ui
+            client-secret: ${KEYCLOAK_FRONT_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,profile,email
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak:8080/realms/bank-realm

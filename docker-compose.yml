@@ -110,6 +110,22 @@ services:
     networks:
       - bank-network
 
+  bank-front-ui:
+    container_name: bank-front-ui
+    build:
+      context: .
+      dockerfile: bank-front-ui/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KEYCLOAK_FRONT_CLIENT_SECRET: ${KEYCLOAK_FRONT_CLIENT_SECRET}
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    networks:
+      - bank-network
+
 networks:
   bank-network:
     driver: bridge
