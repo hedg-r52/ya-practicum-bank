@@ -1,0 +1,38 @@
+{
+  "realm": "bank-realm",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "bank-gateway",
+      "secret": "secret",
+      "redirectUris": ["http://localhost:8080/login/oauth2/code/*"],
+      "webOrigins": ["+"],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true
+    },
+    {
+      "clientId": "bank-auth-server",
+      "secret": "secret",
+      "redirectUris": ["http://localhost:9000/login/oauth2/code/*"],
+      "webOrigins": ["+"],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true
+    }
+  ],
+  "users": [
+    {
+      "username": "user1",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ]
+    }
+  ]
+}

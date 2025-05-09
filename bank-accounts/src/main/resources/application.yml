@@ -1,7 +1,6 @@
-server:
-  port: 8081
-
 spring:
+  config:
+    import: configserver:http://bank-config-server:8888
   application:
     name: bank-accounts
   security:
@@ -9,15 +8,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://keycloak:8080/realms/bank-realm
-  cloud:
-    gateway:
-      routes:
-        - id: bank-accounts
-          uri: lb://bank-accounts
-          predicates:
-            - Path=/api/accounts/**
-          filters:
-            - StripPrefix=1
+
 eureka:
   client:
     service-url:

@@ -1,10 +1,39 @@
+version: '3.8'
+
 services:
+
+  keycloak:
+    build:
+      context: .
+      dockerfile: Dockerfile.keycloak
+    container_name: keycloak
+    command: [ "./bin/kc.sh", "start-dev", "--import-realm" ]
+    environment:
+      KC_DB: dev-mem
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - ./keycloak/realm-config:/opt/keycloak/data/import
+    ports:
+      - "8080:8080"
+    networks:
+      - bank-network
 
   eureka-server:
     container_name: bank-eureka-server
     build:
       context: .
       dockerfile: bank-eureka-server/Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
     ports:
       - "8761:8761"
     networks:
@@ -15,6 +44,11 @@ services:
     build:
       context: .
       dockerfile: bank-config-server/Dockerfile
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
     ports:
       - "8888:8888"
     depends_on:
@@ -22,6 +56,60 @@ services:
     networks:
       - bank-network
 
+  bank-gateway:
+    container_name: bank-gateway
+    build:
+      context: .
+      dockerfile: bank-gateway/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_GATEWAY_CLIENT_SECRET}
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  accounts-service:
+    container_name: bank-accounts
+    build:
+      context: .
+      dockerfile: bank-accounts/Dockerfile
+    ports:
+      - "8082:8081"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+
+  auth-server:
+    container_name: bank-auth-server
+    build:
+      context: .
+      dockerfile: bank-auth-server/Dockerfile
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    networks:
+      - bank-network
+
 networks:
   bank-network:
-      driver: bridge
+    driver: bridge

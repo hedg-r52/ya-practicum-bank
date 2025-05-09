@@ -2,11 +2,25 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: bank-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
           lowerCaseServiceId: true
-  application:
-    name: bank-gateway
+      routes:
+        - id: accounts-service
+          uri: lb://bank-accounts
+          predicates:
+            - Path=/accounts/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bank-eureka-server:8761/eureka

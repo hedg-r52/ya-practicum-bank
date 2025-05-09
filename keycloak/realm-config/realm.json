@@ -1,0 +1,41 @@
+{
+  "realm": "bank-realm",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "bank-gateway",
+      "secret": "QoFkoGrI1bKehsnK1Ksz4kplW0RxLrbrvK6OHEFUXQkUuFKkZKaNmSkOd+CyN2kV",
+      "redirectUris": ["http://localhost:8080/login/oauth2/code/*"],
+      "webOrigins": ["*"],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "bank-auth-server",
+      "secret": "A+McNYM/AbEsEj8DWXYR2G6QwbyC8THfsKpxQG8IJ2GVgwt7BCe2VZTjK6MvK7VU",
+      "redirectUris": ["http://localhost:9000/login/oauth2/code/*"],
+      "webOrigins": ["*"],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "serviceAccountsEnabled": true
+    }
+  ],
+  "users": [
+    {
+      "username": "user1",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ],
+      "realmRoles": ["offline_access", "uma_authorization"]
+    }
+  ]
+}
