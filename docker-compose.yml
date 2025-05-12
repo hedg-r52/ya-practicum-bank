@@ -118,7 +118,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: default
       KEYCLOAK_FRONT_CLIENT_SECRET: ${KEYCLOAK_FRONT_CLIENT_SECRET}
     depends_on:
       keycloak:
@@ -134,7 +134,7 @@ services:
     ports:
       - "8089:8089"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: default
     depends_on:
       keycloak:
         condition: service_healthy
@@ -142,8 +142,32 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
+      accounts-service:
+        condition: service_started
     networks:
       - bank-network
+
+  bank-transfer:
+    container_name: bank-transfer
+    build:
+      context: .
+      dockerfile: bank-transfer/Dockerfile
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      accounts-service:
+        condition: service_started
+    networks:
+      - bank-network
+
 
 networks:
   bank-network:
