@@ -168,6 +168,24 @@ services:
     networks:
       - bank-network
 
+  bank-blocker:
+    container_name: bank-blocker
+    build:
+      context: .
+      dockerfile: bank-blocker/Dockerfile
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
 
 networks:
   bank-network:

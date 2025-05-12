@@ -11,6 +11,6 @@ include 'bank-cash'
 //include 'bank-exchange'
 //include 'bank-exchange-generator'
 include 'bank-transfer'
-//include 'bank-blocker'
+include 'bank-blocker'
 //include 'bank-notifications'
 
