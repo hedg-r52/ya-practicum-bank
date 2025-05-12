@@ -17,3 +17,8 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://keycloak:8080/realms/bank-realm
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bank-eureka-server:8761/eureka

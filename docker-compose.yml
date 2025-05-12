@@ -126,6 +126,25 @@ services:
     networks:
       - bank-network
 
+  bank-cash:
+    container_name: bank-cash
+    build:
+      context: .
+      dockerfile: bank-cash/Dockerfile
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
 networks:
   bank-network:
     driver: bridge
