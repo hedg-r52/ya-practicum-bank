@@ -2,6 +2,8 @@ server:
   port: 9000
 
 spring:
+  application:
+    name: bank-auth-server
   security:
     oauth2:
       client:
@@ -15,3 +17,10 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://keycloak:8080/realms/bank-realm
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://bank-eureka-server:8761/eureka

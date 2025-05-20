@@ -2,6 +2,8 @@ server:
   port: 8083
 
 spring:
+  application:
+    name: bank-front-ui
   thymeleaf:
     cache: false
   security:
@@ -20,5 +22,7 @@ spring:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://bank-eureka-server:8761/eureka

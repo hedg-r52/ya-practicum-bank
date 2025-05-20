@@ -1,14 +1,12 @@
 server:
-  port: 8093
+  port: 8091
 
 spring:
   application:
-    name: bank-exchange
+    name: bank-blocker
   cloud:
     config:
-      uri: http://bank-config-server:8888
-  config:
-    import: optional:configserver:http://bank-config-server:8888
+      uri: http://config-server:8888
   security:
     oauth2:
       resourceserver:
