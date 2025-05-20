@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'ya-practicum-bank'
 
 // Subprojects
@@ -8,9 +15,8 @@ include 'bank-auth-server'
 include 'bank-front-ui'
 include 'bank-accounts'
 include 'bank-cash'
-//include 'bank-exchange'
+include 'bank-exchange'
 include 'bank-exchange-generator'
 include 'bank-transfer'
 include 'bank-blocker'
-//include 'bank-notifications'
-
+// include 'bank-notifications'
