@@ -187,6 +187,23 @@ services:
     networks:
       - bank-network
 
+  bank-exchange-generator:
+    container_name: bank-exchange-generator
+    build:
+      context: .
+      dockerfile: bank-exchange-generator/Dockerfile
+    ports:
+      - "8092:8092"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
 networks:
   bank-network:
     driver: bridge
