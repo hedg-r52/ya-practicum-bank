@@ -1,0 +1,34 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: bank-front-ui
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: gateway
+            client-secret: QoFkoGrI1bKehsnK1Ksz4kplW0RxLrbrvK6OHEFUXQkUuFKkZKaNmSkOd+CyN2kV
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid, profile
+            provider: keycloak
+
+        provider:
+          keycloak:
+            authorization-uri: http://keycloak:8080/realms/bank-realm/protocol/openid-connect/auth
+            token-uri: http://keycloak:8080/realms/bank-realm/protocol/openid-connect/token
+            user-info-uri: http://keycloak:8080/realms/bank-realm/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://bank-eureka-sever:8761/eureka
+
+gateway_service_url: http://bank-gateway:8081

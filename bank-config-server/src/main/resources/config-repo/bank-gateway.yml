@@ -16,7 +16,7 @@ spring:
           enabled: true
           lowerCaseServiceId: true
       routes:
-        - id: accounts-service
+        - id: bank-accounts
           uri: lb://bank-accounts
           predicates:
             - Path=/accounts/**

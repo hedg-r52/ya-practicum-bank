@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        maven { url 'https://repo.spring.io/release'}
     }
 }
 
@@ -20,3 +21,5 @@ include 'bank-exchange-generator'
 include 'bank-transfer'
 include 'bank-blocker'
 include 'bank-notifications'
+
+include 'clients'

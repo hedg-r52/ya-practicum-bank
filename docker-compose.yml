@@ -1,5 +1,18 @@
 
 services:
+#  postgres-keycloak:
+#    image: postgres:17
+#    container_name: postgres-keycloak
+#    environment:
+#      POSTGRES_DB: keycloak
+#      POSTGRES_USER: keycloak
+#      POSTGRES_PASSWORD: keycloak
+#    ports:
+#      - "5433:5432"
+#    volumes:
+#      - ./keycloak/data/keycloak-postgres:/var/lib/postgresql/data
+#    networks:
+#      - bank-network
 
   keycloak:
     build:
@@ -8,9 +21,10 @@ services:
     container_name: keycloak
     command: [ "./bin/kc.sh", "start-dev", "--import-realm" ]
     environment:
-      KC_DB: dev-mem
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
       interval: 10s
@@ -18,8 +32,23 @@ services:
       retries: 20
     volumes:
       - ./keycloak/realm-config:/opt/keycloak/data/import
+      - ./storage/keycloak:/opt/keycloak/data/h2
     ports:
       - "8080:8080"
+    networks:
+      - bank-network
+
+  bank-postgres:
+    image: postgres:17
+    container_name: bank-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db.init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./storage/postgres:/var/lib/postgresql/data
     networks:
       - bank-network
 
@@ -74,13 +103,13 @@ services:
     networks:
       - bank-network
 
-  accounts-service:
+  bank-accounts:
     container_name: bank-accounts
     build:
       context: .
       dockerfile: bank-accounts/Dockerfile
     ports:
-      - "8082:8081"
+      - "8082:8082"
     depends_on:
       keycloak:
         condition: service_healthy
@@ -91,20 +120,20 @@ services:
     networks:
       - bank-network
 
-  auth-server:
-    container_name: bank-auth-server
-    build:
-      context: .
-      dockerfile: bank-auth-server/Dockerfile
-    ports:
-      - "9000:9000"
-    environment:
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
-    depends_on:
-      keycloak:
-        condition: service_healthy
-    networks:
-      - bank-network
+#  auth-server:
+#    container_name: bank-auth-server
+#    build:
+#      context: .
+#      dockerfile: bank-auth-server/Dockerfile
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+#    depends_on:
+#      keycloak:
+#        condition: service_healthy
+#    networks:
+#      - bank-network
 
   bank-front-ui:
     container_name: bank-front-ui
@@ -112,7 +141,7 @@ services:
       context: .
       dockerfile: bank-front-ui/Dockerfile
     ports:
-      - "8083:8083"
+      - "80:80"
     environment:
       KEYCLOAK_FRONT_CLIENT_SECRET: ${KEYCLOAK_FRONT_CLIENT_SECRET}
     depends_on:
@@ -121,113 +150,113 @@ services:
     networks:
       - bank-network
 
-  bank-cash:
-    container_name: bank-cash
-    build:
-      context: .
-      dockerfile: bank-cash/Dockerfile
-    ports:
-      - "8089:8089"
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      accounts-service:
-        condition: service_started
-    networks:
-      - bank-network
-
-  bank-transfer:
-    container_name: bank-transfer
-    build:
-      context: .
-      dockerfile: bank-transfer/Dockerfile
-    ports:
-      - "8090:8090"
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      accounts-service:
-        condition: service_started
-    networks:
-      - bank-network
-
-  bank-blocker:
-    container_name: bank-blocker
-    build:
-      context: .
-      dockerfile: bank-blocker/Dockerfile
-    ports:
-      - "8091:8091"
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-    networks:
-      - bank-network
-
-  bank-exchange-generator:
-    container_name: bank-exchange-generator
-    build:
-      context: .
-      dockerfile: bank-exchange-generator/Dockerfile
-    ports:
-      - "8092:8092"
-    depends_on:
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-    networks:
-      - bank-network
-
-  bank-exchange:
-    container_name: bank-exchange
-    build:
-      context: .
-      dockerfile: bank-exchange/Dockerfile
-    ports:
-      - "8093:8093"
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      accounts-service:
-        condition: service_started
-      bank-exchange-generator:
-        condition: service_started
-    networks:
-      - bank-network
-
-  bank-notifications:
-    container_name: bank-notifications
-    build:
-      context: .
-      dockerfile: bank-notifications/Dockerfile
-    ports:
-      - "8095:8095"
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-    networks:
-      - bank-network
+#  bank-cash:
+#    container_name: bank-cash
+#    build:
+#      context: .
+#      dockerfile: bank-cash/Dockerfile
+#    ports:
+#      - "8089:8089"
+#    depends_on:
+#      keycloak:
+#        condition: service_healthy
+#      config-server:
+#        condition: service_healthy
+#      eureka-server:
+#        condition: service_healthy
+#      bank-accounts:
+#        condition: service_started
+#    networks:
+#      - bank-network
+#
+#  bank-transfer:
+#    container_name: bank-transfer
+#    build:
+#      context: .
+#      dockerfile: bank-transfer/Dockerfile
+#    ports:
+#      - "8090:8090"
+#    depends_on:
+#      keycloak:
+#        condition: service_healthy
+#      config-server:
+#        condition: service_healthy
+#      eureka-server:
+#        condition: service_healthy
+#      bank-accounts:
+#        condition: service_started
+#    networks:
+#      - bank-network
+#
+#  bank-blocker:
+#    container_name: bank-blocker
+#    build:
+#      context: .
+#      dockerfile: bank-blocker/Dockerfile
+#    ports:
+#      - "8091:8091"
+#    depends_on:
+#      keycloak:
+#        condition: service_healthy
+#      config-server:
+#        condition: service_healthy
+#      eureka-server:
+#        condition: service_healthy
+#    networks:
+#      - bank-network
+#
+#  bank-exchange-generator:
+#    container_name: bank-exchange-generator
+#    build:
+#      context: .
+#      dockerfile: bank-exchange-generator/Dockerfile
+#    ports:
+#      - "8092:8092"
+#    depends_on:
+#      config-server:
+#        condition: service_healthy
+#      eureka-server:
+#        condition: service_healthy
+#    networks:
+#      - bank-network
+#
+#  bank-exchange:
+#    container_name: bank-exchange
+#    build:
+#      context: .
+#      dockerfile: bank-exchange/Dockerfile
+#    ports:
+#      - "8093:8093"
+#    depends_on:
+#      keycloak:
+#        condition: service_healthy
+#      config-server:
+#        condition: service_healthy
+#      eureka-server:
+#        condition: service_healthy
+#      bank-accounts:
+#        condition: service_started
+#      bank-exchange-generator:
+#        condition: service_started
+#    networks:
+#      - bank-network
+#
+#  bank-notifications:
+#    container_name: bank-notifications
+#    build:
+#      context: .
+#      dockerfile: bank-notifications/Dockerfile
+#    ports:
+#      - "8095:8095"
+#    depends_on:
+#      keycloak:
+#        condition: service_healthy
+#      config-server:
+#        condition: service_healthy
+#      eureka-server:
+#        condition: service_healthy
+#    networks:
+#      - bank-network
 
 
 networks:

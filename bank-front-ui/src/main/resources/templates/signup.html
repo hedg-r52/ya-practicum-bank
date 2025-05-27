@@ -1,58 +1,57 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Регистрация</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Регистрация пользователя</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
 </head>
-
 <body>
-<form th:action="${'/signup'}" method="post">
-<table style="width:30%;margin-left:auto;margin-right:auto;border-radius:2%;padding:10px;background-color:whitesmoke;">
-    <tr>
-        <td colspan="2">
-            <span style="color:red;font-weight:bold;">*</span> Все поля обязательны для заполнения
-        </td>
-    </tr>
-    <tr th:each="error : ${errors}">
-        <td style="color:red;" th:text="${error}" colspan="2"/>
-    </tr>
-    <tr>
-        <td style="font-weight:bold;">Логин</td>
-        <td>
-            <input name="login" type="text" th:value="${login}" style="width:100%" required/>
-        </td>
-    </tr>
-    <tr>
-        <td style="font-weight:bold;">Пароль</td>
-        <td>
-            <input name="password" type="password" style="width:100%" required/>
-        </td>
-    </tr>
-    <tr>
-        <td style="font-weight:bold;">Повторите пароль</td>
-        <td>
-            <input name="confirm_password" type="password" style="width:100%" required/>
-        </td>
-    </tr>
-    <tr>
-        <td style="font-weight:bold;">Фамилия Имя</td>
-        <td>
-            <input name="name" type="text" th:value="${name}" style="width:100%" required/>
-        </td>
-    </tr>
-    <tr>
-        <td style="font-weight:bold;">Дата рождения </td>
-        <td>
-            <input name="birthdate" type="date" th:value="${birthdate}" style="width:100%" required/>
-        </td>
-    </tr>
-    <tr>
-        <td style="text-align:right" colspan="2">
-            <button>Зарегистрироваться</button>
-        </td>
-    </tr>
-</table>
-</form>
-</body>
+<div class="col-12 d-flex justify-content-center">
+    <div class="card" style="margin-top:15%">
+        <div class="card-body">
+            <div class="row">
+                <h4>Регистрация</h4>
+                <form
+                        th:action="@{/signup}"
+                        method="post"
+                >
+                    <div class="form-group mt-3">
+                        <label for="login">Введите логин</label>
+                        <input type="text" class="form-control" id="login" name="login" aria-describedby="login"
+                               placeholder="Введите логин"/>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="password">Пароль</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Введите пароль"/>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="lastName">Фамилия</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName"
+                               placeholder="Введите фамилию"/>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="firstName">Имя</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName"
+                               placeholder="Введите имя"/>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email"
+                               placeholder="Введите email"/>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="birthDate">Дата рождения</label>
+                        <input type="date" class="form-control" id="birthDate" name="birthDate"
+                               placeholder="Введите имя"/>
+                    </div>
 
+                    <button type="submit" class="btn btn-primary mt-5">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 </html>

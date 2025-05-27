@@ -1,0 +1,40 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: bank-gateway
+  cloud:
+    gateway:
+      forwarded-headers-strategy: native
+      routes:
+        - id: bank-accounts
+          uri: http://bank-accounts:8080
+          predicates:
+            - Path=/api/accounts/**
+
+      default-filters:
+        - TokenRelay
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: bank-gateway
+            client-secret: ${KEYCLOAK_GATEWAY_CLIENT_SECRET}
+            provider: keycloak
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8081/login/oauth2/code/keycloak
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak:8080/realms/bank-realm
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/bank-realm
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bank-eureka-server:8761/eureka

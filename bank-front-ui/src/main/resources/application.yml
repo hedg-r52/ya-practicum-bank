@@ -1,28 +1,40 @@
 server:
-  port: 8083
+  port: 80
 
 spring:
   application:
     name: bank-front-ui
-  thymeleaf:
-    cache: false
+
   security:
     oauth2:
       client:
         registration:
+          gateway:
+            client-id: gateway
+            client-secret: QoFkoGrI1bKehsnK1Ksz4kplW0RxLrbrvK6OHEFUXQkUuFKkZKaNmSkOd+CyN2kV
+            authorization-grant-type: client_credentials
+            scope: openid
+            provider: keycloak
+
           keycloak:
             client-id: bank-front-ui
-            client-secret: ${KEYCLOAK_FRONT_CLIENT_SECRET}
+            client-secret: QZ7KzL1OpXEy5c7Nc3hG9JQp6XLsEaEXzRUu7LkoGd3RyzHhYvA5byzH5JqDjU8L
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope: openid,profile,email
+            scope: openid, profile
+            provider: keycloak
+
         provider:
           keycloak:
-            issuer-uri: http://keycloak:8080/realms/bank-realm
+            authorization-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://bank-eureka-server:8761/eureka
+      defaultZone: http://localhost:8761/eureka
+gateway_service_url: http://localhost:8081
