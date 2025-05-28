@@ -25,7 +25,7 @@ import java.net.URI;
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
 
-    private static final String BASE_URL = "/accounts";
+    private static final String BASE_URL = "/";
 
     @Bean
     public PasswordEncoder passwordEncoder() {

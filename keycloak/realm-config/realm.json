@@ -25,6 +25,16 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "accounts",
+      "secret": "jWn4G9dklMv6zT1Xp2eQ3Lz6oCq9Bd3f",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
   ],
   "users": [

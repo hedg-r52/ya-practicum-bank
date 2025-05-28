@@ -3,13 +3,22 @@ package ru.yandex.practicum.bank.front.dto.account;
 import jakarta.validation.constraints.NotNull;
 
 public class AccountCreateRequestDto {
-    @NotNull
     private Long userId;
-    @NotNull
     private String currency;
 
-    public AccountCreateRequestDto(Long userId, String currency) {
-        this.userId = userId;
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

@@ -8,6 +8,9 @@ public class UserUpdateRequestDto {
     private String lastName;
     private String email;
 
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private LocalDate birthDate;
+
     public String getFirstName() {
         return firstName;
     }
@@ -39,7 +42,4 @@ public class UserUpdateRequestDto {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
-
-    @JsonFormat(pattern = "dd.MM.yyyy")
-    private LocalDate birthDate;
 }

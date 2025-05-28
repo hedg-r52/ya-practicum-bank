@@ -2,6 +2,7 @@ package ru.yandex.practicum.bank.accounts.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class UserUpdateRequestDto {
@@ -9,7 +10,7 @@ public class UserUpdateRequestDto {
     private String lastName;
     private String email;
     @JsonFormat(pattern = "dd.MM.yyyy")
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
     public String getFirstName() {
         return firstName;
@@ -35,11 +36,11 @@ public class UserUpdateRequestDto {
         this.email = email;
     }
 
-    public LocalDateTime getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDateTime birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 }

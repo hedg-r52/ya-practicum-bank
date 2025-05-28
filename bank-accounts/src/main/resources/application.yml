@@ -34,6 +34,14 @@ spring:
     password: ${POSTGRESQL_PASSWORD:postgres}
     enabled: true
 
+logging:
+  level:
+    root: INFO
+    ru.yandex.practicum.bank.accounts: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.web.reactive: DEBUG
+    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+
 eureka:
   client:
     service-url:

@@ -10,7 +10,6 @@ import ru.yandex.practicum.bank.accounts.exception.UserNotFoundException;
 import ru.yandex.practicum.bank.accounts.mapper.AccountMapper;
 import ru.yandex.practicum.bank.accounts.mapper.UserMapper;
 import ru.yandex.practicum.bank.accounts.model.Account;
-import ru.yandex.practicum.bank.accounts.model.User;
 import ru.yandex.practicum.bank.accounts.repository.AccountRepository;
 import ru.yandex.practicum.bank.accounts.repository.UserRepository;
 import ru.yandex.practicum.bank.accounts.service.UserService;

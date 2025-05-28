@@ -8,7 +8,7 @@ import ru.yandex.practicum.bank.accounts.dto.account.TransferMoneyRequestDto;
 import ru.yandex.practicum.bank.accounts.dto.account.TransferMoneyResponseDto;
 
 public interface AccountService {
-    Mono<AccountResponseDto> create(AccountCreateRequestDto request);
+    Mono<AccountResponseDto> createAccount(AccountCreateRequestDto request);
 
     Mono<Void> deleteAccount(Long accountId);
 

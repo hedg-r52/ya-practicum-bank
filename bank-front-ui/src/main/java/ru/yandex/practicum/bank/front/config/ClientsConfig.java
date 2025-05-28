@@ -11,7 +11,7 @@ import ru.yandex.practicum.bank.clients.accounts.AccountClient;
 @Configuration
 public class ClientsConfig {
 
-    @Value("${gateway_service_url}/accounts")
+    @Value("${gateway_service_url}/api")
     private String accountUri;
 
     @Bean

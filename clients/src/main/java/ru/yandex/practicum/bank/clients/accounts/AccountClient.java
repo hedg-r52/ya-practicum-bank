@@ -11,7 +11,6 @@ import ru.yandex.practicum.bank.clients.accounts.dto.accounts.*;
 import ru.yandex.practicum.bank.clients.accounts.dto.user.*;
 import ru.yandex.practicum.bank.clients.exception.MoneyException;
 
-
 @RequiredArgsConstructor
 public class AccountClient extends AbstractClient {
     private final String baseUrl;
@@ -23,12 +22,12 @@ public class AccountClient extends AbstractClient {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(request)
                         .retrieve())
-                .flatMap(response -> responseToMono(response, UserResponse.class));
+            .flatMap(response -> responseToMono(response, UserResponse.class));
     }
 
     public Mono<UserResponse> findUserByAccountId(Long accountId) {
         return Mono.just(webClient.get()
-                        .uri(baseUrl + "/user/account/{accountId}", accountId)
+                        .uri(baseUrl + "/user/find/account/{accountId}", accountId)
                         .retrieve())
                 .flatMap(response -> responseToMono(response, UserResponse.class));
     }
@@ -79,7 +78,7 @@ public class AccountClient extends AbstractClient {
     public Mono<AccountResponse> getAccountById(Long accountId) {
         return Mono.just(webClient
                         .get()
-                        .uri(baseUrl + "/account/" + accountId)
+                        .uri(baseUrl + "/accounts/" + accountId)
                         .retrieve()
                 )
                 .flatMap(response -> responseToMono(response, AccountResponse.class));
@@ -88,7 +87,7 @@ public class AccountClient extends AbstractClient {
     public Flux<AccountResponse> getUserAccounts(Long userId) {
         return Flux.just(webClient
                         .get()
-                        .uri(baseUrl + "/account/user/" + userId)
+                        .uri(baseUrl + "/accounts/user/" + userId)
                         .retrieve()
                 )
                 .flatMap(response -> responseToFlux(response, AccountResponse.class));
@@ -97,7 +96,7 @@ public class AccountClient extends AbstractClient {
     public Mono<AccountResponse> depositMoney(Long accountId, DepositMoneyToAccount request) {
         return Mono.just(webClient
                         .put()
-                        .uri(baseUrl + "/account/" + accountId + "/deposit")
+                        .uri(baseUrl + "/accounts/" + accountId + "/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(request)
                         .retrieve()
@@ -108,7 +107,7 @@ public class AccountClient extends AbstractClient {
     public Mono<AccountResponse> withdrawMoney(Long accountId, WithdrawMoneyFromAccount request) {
         return Mono.just(webClient
                         .put()
-                        .uri(baseUrl + "/account/" + accountId + "/withdraw")
+                        .uri(baseUrl + "/accounts/" + accountId + "/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(request)
                         .retrieve()
@@ -123,7 +122,7 @@ public class AccountClient extends AbstractClient {
     public Mono<TransferMoneyResponse> transferMoney(TransferMoneyRequest request) {
         return Mono.just(webClient
                         .put()
-                        .uri(baseUrl + "/account/transfer")
+                        .uri(baseUrl + "/accounts/transfer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(request)
                         .retrieve()
@@ -138,7 +137,7 @@ public class AccountClient extends AbstractClient {
     public Mono<Void> deleteAccount(Long accountId) {
         return Mono.just(webClient
                         .delete()
-                        .uri(baseUrl + "/account/" + accountId)
+                        .uri(baseUrl + "/accounts/" + accountId)
                         .retrieve()
                 )
                 .flatMap(response -> responseToMono(response, Void.class));

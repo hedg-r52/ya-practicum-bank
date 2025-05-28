@@ -1,20 +1,66 @@
 package ru.yandex.practicum.bank.accounts.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.yandex.practicum.bank.accounts.dto.account.AccountCreateRequestDto;
+import ru.yandex.practicum.bank.accounts.dto.account.AccountResponseDto;
+import ru.yandex.practicum.bank.accounts.dto.account.DepositMoneyDto;
+import ru.yandex.practicum.bank.accounts.dto.account.TransferMoneyRequestDto;
+import ru.yandex.practicum.bank.accounts.dto.account.TransferMoneyResponseDto;
+import ru.yandex.practicum.bank.accounts.dto.account.WithdrawMoneyDto;
+import ru.yandex.practicum.bank.accounts.service.AccountService;
 
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/accounts")
 public class AccountsController {
 
-    @GetMapping("/api/accounts")
-    public List<Map<String, String>> getAccounts() {
-        return List.of(
-                Map.of("id", "1", "type", "checking"),
-                Map.of("id", "2", "type", "savings")
-        );
+    private final AccountService accountService;
+
+    @GetMapping("/{accountId}")
+    public Mono<AccountResponseDto> getAccountById(@PathVariable Long accountId) {
+        return accountService.getAccountById(accountId);
     }
 
+    @GetMapping("/user/{userId}")
+    public Flux<AccountResponseDto> getUserAccounts(@PathVariable Long userId) {
+        return accountService.getUserAccounts(userId);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<AccountResponseDto> createAccount(@RequestBody AccountCreateRequestDto request) {
+        return accountService.createAccount(request);
+    }
+
+    @DeleteMapping("/{accountId}")
+    public Mono<Void> deleteAccount(@PathVariable Long accountId) {
+        return accountService.deleteAccount(accountId);
+    }
+
+    @PutMapping("/{accountId}/deposit")
+    public Mono<AccountResponseDto> depositToAccount(@PathVariable Long accountId, @RequestBody DepositMoneyDto request) {
+        return accountService.depositMoney(accountId, request.getAmount());
+    }
+
+    @PutMapping("/{accountId}/withdraw")
+    public Mono<AccountResponseDto> withdrawFromAccount(@PathVariable Long accountId, @RequestBody WithdrawMoneyDto request) {
+        return accountService.withdrawMoney(accountId, request.getAmount());
+    }
+
+    @PutMapping("/transfer")
+    public Mono<TransferMoneyResponseDto> transferMoney(@RequestBody TransferMoneyRequestDto request) {
+        return accountService.transferMoney(request);
+    }
 }

@@ -26,11 +26,11 @@ public class AccountServiceImpl implements AccountService {
     private final AccountMapper accountMapper;
 
     @Override
-    public Mono<AccountResponseDto> create(AccountCreateRequestDto request) {
+    public Mono<AccountResponseDto> createAccount(AccountCreateRequestDto request) {
         var currency = Currency.valueOf(request.getCurrency());
         var account = new Account(
                 request.getUserId(),
-                Currency.valueOf(request.getCurrency())
+                currency
         );
         return accountRepository.save(account)
                 .onErrorResume(Mono::error)
@@ -85,8 +85,25 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public Mono<TransferMoneyResponseDto> transferMoney(TransferMoneyRequestDto request) {
-        return withdrawMoney(request.getFromAccountId(), request.getAmount())
-                .flatMap(response -> depositMoney(request.getToAccountId(), request.getAmount()))
-                .map(response -> TransferMoneyResponseDto.builder().completed(true).build());
+        return Mono.zip(
+                        accountRepository.findById(request.getFromAccountId()),
+                        accountRepository.findById(request.getToAccountId())
+                )
+                .flatMap(tuple -> {
+                    Account fromAccount = tuple.getT1();
+                    Account toAccount = tuple.getT2();
+                    Double amount = request.getAmount();
+
+                    if (fromAccount.getAmount() < amount) {
+                        return Mono.error(new NotEnoughMoneyException());
+                    }
+
+                    fromAccount.setAmount(fromAccount.getAmount() - amount);
+                    toAccount.setAmount(toAccount.getAmount() + amount);
+
+                    return accountRepository.save(fromAccount)
+                            .then(accountRepository.save(toAccount));
+                })
+                .thenReturn(TransferMoneyResponseDto.builder().completed(true).build());
     }
 }

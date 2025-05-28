@@ -8,15 +8,15 @@ spring:
     gateway:
       forwarded-headers-strategy: native
       routes:
-        - id: bank-accounts
+        - id: accounts
           uri: http://localhost:8082
           predicates:
-            - Path=/accounts/**
+            - Path=/api/accounts/**,/api/user/**
           filters:
-            - RewritePath=/accounts/?(?<segment>.*), /$\{segment}
-
-      default-filters:
-        - TokenRelay
+            - RewritePath=/api/?(?<segment>.*), /${segment}
+            - name: TokenRelayKeycloak
+              args:
+                registrationId: accounts
 
   security:
     oauth2:
@@ -29,12 +29,24 @@ spring:
             authorization-grant-type: authorization_code
             redirect-uri: http://localhost:8081/login/oauth2/code/keycloak
             scope: openid, profile, email
+          accounts:
+            provider: keycloak
+            client-id: accounts
+            client-secret: jWn4G9dklMv6zT1Xp2eQ3Lz6oCq9Bd3f
+            scope: profile
+            authorization-grant-type: client_credentials
         provider:
           keycloak:
             issuer-uri: http://localhost:8080/realms/bank-realm
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8080/realms/bank-realm
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 
 eureka:
   client:

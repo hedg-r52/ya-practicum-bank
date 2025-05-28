@@ -32,10 +32,8 @@
                         <td th:text="${#numbers.formatDecimal(account.amount == null ? 0 : account.amount, 1, 2)}"></td>
                         <td th:text="${account.currency}"></td>
                         <td>
-                            <form
-                                    th:action="@{'/accounts/'+${account.id}+'/delete'}"
-                                    method="post"
-                            >
+                            <form th:action="@{'/accounts/' + ${account.id}}" method="post">
+                                <input type="hidden" name="_method" value="delete"/>
                                 <button type="submit" class="btn btn-primary">Удалить</button>
                             </form>
                         </td>
@@ -47,13 +45,9 @@
             <div class="mb-2">
                 <h6>Открыть счет</h6>
             </div>
-            <span th:if="${#lists.size(currencyList) == 0}">Нет доступных счетов для открытия</span>
-            <form
-                    th:action="@{'/accounts'}"
-                    method="post"
-                    th:if="${#lists.size(currencyList) != 0}"
-            >
-                <div data-mdb-input-init class="form-outline mb-4">
+            <span th:if="${#lists.isEmpty(currencyList)}">Нет доступных счетов для открытия</span>
+            <form th:action="@{/accounts}" method="post" th:if="${!#lists.isEmpty(currencyList)}">
+                <div class="form-outline mb-4">
                     <label class="form-label" for="currency">Валюта</label>
                     <select class="form-select" id="currency" name="currency">
                         <option th:each="currency : ${currencyList}"
@@ -62,14 +56,11 @@
                         </option>
                     </select>
                 </div>
-                <input type="hidden" id="userId" name="userId" class="form-control" th:value="${userId}"/>
+                <input type="hidden" id="userId" name="userId" th:value="${userId}"/>
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary btn-block mb-4">
-                        Сохранить
-                    </button>
+                    <button type="submit" class="btn btn-primary btn-block mb-4">Сохранить</button>
                 </div>
             </form>
-
         </div>
     </div>
 </main>
