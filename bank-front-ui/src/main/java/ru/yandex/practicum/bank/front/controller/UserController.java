@@ -1,6 +1,5 @@
 package ru.yandex.practicum.bank.front.controller;
 
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -11,13 +10,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import ru.yandex.practicum.bank.front.dto.user.FindByLoginRequestDto;
 import ru.yandex.practicum.bank.front.dto.user.PasswordChangeRequestDto;
 import ru.yandex.practicum.bank.front.dto.user.UserRegisterRequestDto;
-import ru.yandex.practicum.bank.front.dto.user.UserResponseDto;
 import ru.yandex.practicum.bank.front.dto.user.UserUpdateRequestDto;
 import ru.yandex.practicum.bank.front.mapper.UserMapper;
 import ru.yandex.practicum.bank.front.model.User;

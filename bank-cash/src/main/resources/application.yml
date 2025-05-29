@@ -9,6 +9,12 @@ spring:
         jwt:
           issuer-uri: http://keycloak:8080/realms/bank-realm
 
+gateway_service_url: http://localhost:8081/api
+
+clients:
+  accounts:
+    uri: ${gateway_service_url}
+
 eureka:
   client:
     service-url:

@@ -11,9 +11,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'org.eclipse.angus:angus-mail:2.0.3'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.liquibase:liquibase-core'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+
+    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:r2dbc-postgresql:0.9.3.RELEASE'
+    runtimeOnly 'io.r2dbc:r2dbc-pool:1.0.2.RELEASE'
+    runtimeOnly 'io.r2dbc:r2dbc-spi:1.0.0.RELEASE'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

@@ -5,7 +5,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.clients.exception.BadRequestException;
-import ru.yandex.practicum.bank.clients.exception.ErrorResponse;
 import ru.yandex.practicum.bank.clients.exception.InternalServerRequestException;
 
 public abstract class AbstractClient {

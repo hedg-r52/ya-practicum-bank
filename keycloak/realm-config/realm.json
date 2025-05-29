@@ -35,20 +35,71 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "blocker",
+      "secret": "dtrO4p_U8eOwHP4n5gVUrRR_F3lz9ItkTFFvG_vO35c",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "cash",
+      "secret": "F0yxbi4TZB6yFVhPjsY5sO6gNDrXnbqu5rfrtbX1rV8",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "exchange",
+      "secret": "Z2xL9HnB7uJvPpUqN1yX4eRsDfWcKoTzLmAbCyEiVrQgHxSdMw",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "exchange-generator",
+      "secret": "LHiAo3MYXcxttwOTpBFzkDt4txqDOfaIcfvHlZhpo7s",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "notifications",
+      "secret": "XybzvWqtC9ngbmRv4FZZRXBl1f1Azmo62EUkaOH4Nn8",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "transfer",
+      "secret": "N1y4UHwEPsMIziQR2qq2f6I_R0MYYFTpUPokCpVPSMQ",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
+
+
   ],
   "users": [
-    {
-      "username": "user1",
-      "enabled": true,
-      "credentials": [
-        {
-          "type": "password",
-          "value": "password"
-        }
-      ],
-      "realmRoles": ["offline_access", "uma_authorization"]
-    },
     {
       "username": "admin",
       "enabled": true,

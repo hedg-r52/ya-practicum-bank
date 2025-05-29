@@ -1,37 +1,17 @@
 package ru.yandex.practicum.bank.exchange.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.yandex.practicum.bank.exchange.client.AccountClient;
-import ru.yandex.practicum.bank.exchange.client.ExchangeRateClient;
-import ru.yandex.practicum.bank.exchange.dto.ExchangeRequest;
-import ru.yandex.practicum.bank.exchange.dto.ExchangeResponse;
+import ru.yandex.practicum.bank.exchange.dto.ExchangeRateRequestDto;
+import ru.yandex.practicum.bank.exchange.dto.ExchangeRateResponseDto;
+import ru.yandex.practicum.bank.exchange.model.Currency;
 
-import java.math.BigDecimal;
+import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ExchangeService {
+public interface ExchangeService {
+    Flux<ExchangeRateResponseDto> getExchangeRates();
 
-    private final ExchangeRateClient rateClient;
-    private final AccountClient accountClient;
+    Mono<ExchangeRateResponseDto> getExchangeRatesByCurrency(Currency currency);
 
-    public Mono<ExchangeResponse> exchange(ExchangeRequest request) {
-        return rateClient.getRate(request.getFromCurrency(), request.getToCurrency())
-                .flatMap(rate -> {
-                    BigDecimal convertedAmount = request.getAmount().multiply(rate);
-
-                    return accountClient.withdraw(request.getAccountId(), request.getAmount())
-                            .then(accountClient.deposit(request.getAccountId(), convertedAmount))
-                            .thenReturn(new ExchangeResponse(
-                                    request.getFromCurrency(),
-                                    request.getToCurrency(),
-                                    request.getAmount(),
-                                    convertedAmount,
-                                    rate
-                            ));
-                });
-    }
-
+    Flux<ExchangeRateResponseDto> save(List<ExchangeRateRequestDto> exchangeRates);
 }

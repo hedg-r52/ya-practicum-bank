@@ -8,13 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.front.dto.account.AccountCreateRequestDto;
 import ru.yandex.practicum.bank.front.service.AccountService;
 import ru.yandex.practicum.bank.front.utils.SecurityUtils;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

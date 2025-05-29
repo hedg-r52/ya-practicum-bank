@@ -37,4 +37,9 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-gateway_service_url: http://localhost:8081
+gateway_service_url: http://localhost:8081/api
+clients:
+  accounts:
+    uri: ${gateway_service_url}
+  cash:
+    uri: ${gateway_service_url}/cash

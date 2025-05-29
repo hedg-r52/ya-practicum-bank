@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.clients.AbstractClient;
 import ru.yandex.practicum.bank.clients.accounts.dto.accounts.*;
 import ru.yandex.practicum.bank.clients.accounts.dto.user.*;
-import ru.yandex.practicum.bank.clients.exception.MoneyException;
+import ru.yandex.practicum.bank.clients.accounts.exception.MoneyException;
 
 @RequiredArgsConstructor
 public class AccountClient extends AbstractClient {

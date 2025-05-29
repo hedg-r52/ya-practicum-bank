@@ -1,34 +1,32 @@
 package ru.yandex.practicum.bank.cash.controller;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-import ru.yandex.practicum.bank.cash.dto.CashRequest;
-import ru.yandex.practicum.bank.cash.dto.CashResponse;
-import ru.yandex.practicum.bank.cash.service.CashService;
+import ru.yandex.practicum.bank.cash.dto.CashTransactionRequestDto;
+import ru.yandex.practicum.bank.cash.dto.CashTransactionResponseDto;
+import ru.yandex.practicum.bank.cash.service.impl.TransactionServiceImpl;
+import ru.yandex.practicum.bank.clients.cash.dto.TransactionType;
 
 @RestController
 @RequestMapping("/cash")
 public class CashController {
 
-    private final CashService cashService;
+    private final TransactionServiceImpl transactionService;
 
-    public CashController(CashService cashService) {
-        this.cashService = cashService;
+    public CashController(TransactionServiceImpl transactionService) {
+        this.transactionService = transactionService;
     }
 
-    @PostMapping("/deposit")
-    public Mono<ResponseEntity<CashResponse>> deposit(@RequestBody CashRequest request) {
-        return cashService.deposit(request)
-                .map(ResponseEntity::ok);
-    }
-
-    @PostMapping("/withdraw")
-    public Mono<ResponseEntity<CashResponse>> withdraw(@RequestBody CashRequest request) {
-        return cashService.withdraw(request)
-                .map(ResponseEntity::ok);
+    @PostMapping("/{type}")
+    public Mono<CashTransactionResponseDto> create(@PathVariable String type,
+                                                   @RequestBody CashTransactionRequestDto request) {
+        return transactionService.create(
+                TransactionType.valueOf(type.toUpperCase()),
+                request
+        );
     }
 }
