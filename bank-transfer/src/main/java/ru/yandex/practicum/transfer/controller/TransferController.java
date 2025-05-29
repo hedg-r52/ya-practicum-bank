@@ -1,27 +1,29 @@
 package ru.yandex.practicum.transfer.controller;
 
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-import ru.yandex.practicum.transfer.dto.TransferRequest;
-import ru.yandex.practicum.transfer.service.TransferService;
+import ru.yandex.practicum.transfer.dto.TransactionRequestDto;
+import ru.yandex.practicum.transfer.dto.TransactionResponseDto;
+import ru.yandex.practicum.transfer.model.TransactionType;
+import ru.yandex.practicum.transfer.service.TransactionService;
 
 @RestController
 @RequestMapping("/transfer")
+@RequiredArgsConstructor
 public class TransferController {
 
-    private final TransferService transferService;
+    private final TransactionService transactionService;
 
-    public TransferController(TransferService transferService) {
-        this.transferService = transferService;
-    }
-
-    @PostMapping
-    public Mono<ResponseEntity<Void>> transfer(@RequestBody TransferRequest transferRequest) {
-        return transferService.transfer(transferRequest)
-                .thenReturn(ResponseEntity.ok().build());
+    @PostMapping("/{type}")
+    public Mono<TransactionResponseDto> create(@PathVariable("type") String transactionType,
+                                               @RequestBody @Valid TransactionRequestDto request) {
+        var type = TransactionType.valueOf(transactionType.toUpperCase());
+        return transactionService.create(type, request);
     }
 }
