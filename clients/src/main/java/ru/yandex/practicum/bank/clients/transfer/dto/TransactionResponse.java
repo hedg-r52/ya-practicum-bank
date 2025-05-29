@@ -1,27 +1,15 @@
-package ru.yandex.practicum.bank.cash.model;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+package ru.yandex.practicum.bank.clients.transfer.dto;
 
 import java.time.LocalDateTime;
 
-public abstract class Transaction {
-    @Id
+public class TransactionResponse {
     private Long id;
     private Long accountId;
+    private Long receiverAccountId;
     private Double amount;
+    private TransactionType type;
     private TransactionStatus status;
-    private Boolean notificationSent;
-    @CreatedDate
     private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
-
-    public Transaction() {
-        status = TransactionStatus.CREATED;
-        notificationSent = false;
-    }
 
     public Long getAccountId() {
         return accountId;
@@ -55,20 +43,12 @@ public abstract class Transaction {
         this.id = id;
     }
 
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
+    public Long getReceiverAccountId() {
+        return receiverAccountId;
     }
 
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
-
-    public Boolean getNotificationSent() {
-        return notificationSent;
-    }
-
-    public void setNotificationSent(Boolean notificationSent) {
-        this.notificationSent = notificationSent;
+    public void setReceiverAccountId(Long receiverAccountId) {
+        this.receiverAccountId = receiverAccountId;
     }
 
     public TransactionStatus getStatus() {
@@ -77,5 +57,13 @@ public abstract class Transaction {
 
     public void setStatus(TransactionStatus status) {
         this.status = status;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
     }
 }

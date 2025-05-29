@@ -20,7 +20,7 @@ public class CashClient extends AbstractClient {
                                                            CashTransactionRequest request) {
         return Mono.just(webClient
                         .post()
-                        .uri(baseUrl + "/transaction/" + type.toString().toLowerCase())
+                        .uri(baseUrl + "/cash/" + type.toString().toLowerCase())
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(request)
                         .retrieve())

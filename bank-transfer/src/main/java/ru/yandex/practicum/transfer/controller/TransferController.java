@@ -10,7 +10,7 @@ import ru.yandex.practicum.transfer.dto.TransferRequest;
 import ru.yandex.practicum.transfer.service.TransferService;
 
 @RestController
-@RequestMapping("/transfers")
+@RequestMapping("/transfer")
 public class TransferController {
 
     private final TransferService transferService;

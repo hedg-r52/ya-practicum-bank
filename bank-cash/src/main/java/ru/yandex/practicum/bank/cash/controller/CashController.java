@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.cash.dto.CashTransactionRequestDto;
 import ru.yandex.practicum.bank.cash.dto.CashTransactionResponseDto;
+import ru.yandex.practicum.bank.cash.model.TransactionType;
 import ru.yandex.practicum.bank.cash.service.impl.TransactionServiceImpl;
-import ru.yandex.practicum.bank.clients.cash.dto.TransactionType;
 
 @RestController
 @RequestMapping("/cash")
