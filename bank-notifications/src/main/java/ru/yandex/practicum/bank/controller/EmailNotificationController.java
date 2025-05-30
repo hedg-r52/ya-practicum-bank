@@ -14,7 +14,7 @@ import ru.yandex.practicum.bank.service.NotificationService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/notification")
+@RequestMapping("/notifications")
 public class EmailNotificationController {
     private final NotificationService notificationService;
 

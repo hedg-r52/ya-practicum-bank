@@ -16,7 +16,7 @@ public class NotificationClient extends AbstractClient {
     public Mono<EmailNotificationResponse> sendEmailNotification(EmailNotificationRequest request) {
         return Mono.just(webClient
                         .post()
-                        .uri(baseUrl + "/notification/email")
+                        .uri(baseUrl + "/notifications/email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(request)
                         .retrieve())

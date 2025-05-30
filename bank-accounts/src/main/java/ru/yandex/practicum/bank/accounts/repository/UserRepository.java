@@ -11,7 +11,7 @@ public interface UserRepository extends R2dbcRepository<User, Long> {
     Mono<User> findByLogin(String login);
 
     @Query("""
-        SELECT u.id, u.login, u.firstName, u.lastName, u.email 
+        SELECT u.id, u.login, u.first_name, u.last_name, u.email
         FROM users u
             LEFT JOIN accounts a ON u.id = a.user_id
         WHERE a.id = :accountId

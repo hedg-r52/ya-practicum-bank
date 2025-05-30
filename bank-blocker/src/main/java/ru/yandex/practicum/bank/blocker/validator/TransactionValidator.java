@@ -28,9 +28,7 @@ public class TransactionValidator {
             case TransferToOtherUserTransaction transferToAnotherUserTransaction ->
                     Mono.just(TransactionValidator.validate(transferToAnotherUserTransaction));
 
-            default -> {
-                throw new UnknownTransactionTypeException(transaction.getClass().getSimpleName());
-            }
+            default -> throw new UnknownTransactionTypeException(transaction.getClass().getSimpleName());
         };
     }
 

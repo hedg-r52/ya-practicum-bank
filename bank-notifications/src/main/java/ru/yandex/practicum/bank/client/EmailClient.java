@@ -30,17 +30,20 @@ public class EmailClient {
 
     @PostConstruct
     private void initSession() {
-        Properties prop = new Properties();
-        prop.put("mail.smtp.auth", true);
-        prop.put("mail.smtp.starttls.enable", "true");
-        prop.put("mail.smtp.host", emailClientConfig.getHost());
-        prop.put("mail.smtp.port", emailClientConfig.getPort());
-        prop.put("mail.smtp.ssl.trust", emailClientConfig.getHost());
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", emailClientConfig.getHost());
+        props.put("mail.smtp.port", String.valueOf(emailClientConfig.getPort()));
+        props.put("mail.smtp.ssl.trust", emailClientConfig.getHost());
 
-        session = Session.getInstance(prop, new Authenticator() {
+        session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(emailClientConfig.getUsername(), emailClientConfig.getPassword());
+                return new PasswordAuthentication(
+                        emailClientConfig.getUsername(),
+                        emailClientConfig.getPassword()
+                );
             }
         });
     }
@@ -60,7 +63,7 @@ public class EmailClient {
         return Mono.just((Message) new MimeMessage(session))
                 .map(message -> {
                     try {
-                        message.setFrom(new InternetAddress(emailClientConfig.getUsername()));
+                        message.setFrom(new InternetAddress("no-reply@localhost"));
 
                         message.setRecipients(
                                 Message.RecipientType.TO, InternetAddress.parse(emailNotification.getRecipient()));

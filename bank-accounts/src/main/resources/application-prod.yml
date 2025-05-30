@@ -1,6 +1,6 @@
 spring:
   config:
-    import: configserver:http://bank-config-server:8888
+    import: configserver:http://config-server:8888
   application:
     name: bank-accounts
   security:
@@ -34,4 +34,10 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://bank-eureka-server:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG

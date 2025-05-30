@@ -9,9 +9,16 @@ spring:
     oauth2:
       client:
         registration:
-          keycloak:
+          gateway:
             client-id: gateway
             client-secret: QoFkoGrI1bKehsnK1Ksz4kplW0RxLrbrvK6OHEFUXQkUuFKkZKaNmSkOd+CyN2kV
+            authorization-grant-type: client_credentials
+            scope: openid
+            provider: keycloak
+
+          keycloak:
+            client-id: bank-front-ui
+            client-secret: QZ7KzL1OpXEy5c7Nc3hG9JQp6XLsEaEXzRUu7LkoGd3RyzHhYvA5byzH5JqDjU8L
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: openid, profile
@@ -29,6 +36,16 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://bank-eureka-sever:8761/eureka
+      defaultZone: http://bank-eureka-server:8761/eureka
 
-gateway_service_url: http://bank-gateway:8081
+gateway_service_url: http://bank-gateway:8081/api
+
+clients:
+  accounts:
+    uri: ${gateway_service_url}
+  exchange:
+    uri: ${gateway_service_url}
+  cash:
+    uri: ${gateway_service_url}
+  transfer:
+    uri: ${gateway_service_url}

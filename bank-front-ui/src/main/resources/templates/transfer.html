@@ -20,7 +20,7 @@
                     <h6>Перевести денги на свой счет</h6>
                 </div>
                 <form
-                        th:action="@{'/transfer/self-transfer'}"
+                        th:action="@{'/transfer/self'}"
                         method="post"
                 >
                     <div class="row">
@@ -74,19 +74,19 @@
                         <div data-mdb-input-init class="form-outline mb-4 col-3">
                             <label class="form-label" for="accountId_w">Кому</label>
                             <select required="required" class="form-select" id="user" name="user">
-                                <option disabled="disabled"></option>
-                                <option th:if="${current != user.id}" th:each="user : ${users}"
+                                <option disabled selected>Выберите пользователя</option>
+                                <option th:each="user : ${users}"
+                                        th:if="${current != user.id}"
                                         th:value="${user.id}"
-                                        th:text="@{${user.surname} + ' ' + ${user.name}}"
-                                        th:selected="${receiver_id != null && receiver_id==user.id}"
-                                >
+                                        th:text="${user.lastName + ' ' + user.firstName}"
+                                        th:selected="${receiver_id != null && receiver_id == user.id}">
                                 </option>
                             </select>
                         </div>
                     </div>
                 </form>
                 <form
-                        th:action="@{'/transfer/transfer-to-other-user'}"
+                        th:action="@{'/transfer/another'}"
                         method="post"
                         th:if="${receiver_id != null}"
                 >
@@ -152,9 +152,17 @@
         }
     })
 
-    document.querySelector("#user").addEventListener('input', e => {
-        console.log(e.currentTarget);
-        console.log(e.currentTarget.closest('form').submit());
-    })
+    document.querySelector("#user").addEventListener('change', e => {
+        const form = e.currentTarget.closest('form');
+
+        // Превращаем выбор в скрытое поле
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'userId';
+        hiddenInput.value = e.currentTarget.value;
+
+        form.appendChild(hiddenInput);
+        form.submit();
+    });
 </script>
 </html>

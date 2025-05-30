@@ -1,7 +1,5 @@
 package ru.yandex.practicum.bank.front.dto.account;
 
-import jakarta.validation.constraints.NotNull;
-
 public class AccountCreateRequestDto {
     private Long userId;
     private String currency;

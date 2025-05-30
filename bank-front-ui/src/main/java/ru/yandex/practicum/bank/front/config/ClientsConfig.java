@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.WebClient;
 import ru.yandex.practicum.bank.clients.accounts.AccountClient;
 import ru.yandex.practicum.bank.clients.cash.CashClient;
+import ru.yandex.practicum.bank.clients.exchange.ExchangeClient;
+import ru.yandex.practicum.bank.clients.transfer.TransferClient;
 
 @Configuration
 public class ClientsConfig {
@@ -15,8 +17,14 @@ public class ClientsConfig {
     @Value("${clients.accounts.uri}")
     private String accountUri;
 
+    @Value("${clients.exchange.uri}")
+    private String exchangeUri;
+
     @Value("${clients.cash.uri}")
     private String cashUri;
+
+    @Value("${clients.transfer.uri}")
+    private String transferUri;
 
     @Bean
     public WebClient webClient(ReactiveOAuth2AuthorizedClientManager manager) {
@@ -35,7 +43,17 @@ public class ClientsConfig {
     }
 
     @Bean
+    public ExchangeClient exchangeClient(WebClient webClient) {
+        return new ExchangeClient(exchangeUri, webClient);
+    }
+
+    @Bean
     public CashClient cashClient(WebClient webClient) {
         return new CashClient(cashUri, webClient);
+    }
+
+    @Bean
+    public TransferClient transferClient(WebClient webClient) {
+        return new TransferClient(transferUri, webClient);
     }
 }

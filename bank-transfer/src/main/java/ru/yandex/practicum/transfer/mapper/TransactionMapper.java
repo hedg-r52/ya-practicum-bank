@@ -73,7 +73,7 @@ public abstract class TransactionMapper {
 
         return switch (name) {
             case "SELFTRANSFER" -> TransactionType.SELF_TRANSFER;
-            case "TRANSFERTOANOTHERUSER" -> TransactionType.TRANSFER_TO_ANOTHER_USER;
+            case "TRANSFERANOTHERUSER" -> TransactionType.TRANSFER_TO_ANOTHER_USER;
             default -> throw new UnknownTransactionTypeException(name);
         };
     }

@@ -12,7 +12,7 @@ public class NotificationMapper {
     public EmailNotificationRequest map(Transaction transaction, String email) {
         String operationType = switch (transaction) {
             case DepositTransaction depositTransaction -> "внесения";
-            case WithdrawTransaction withdrawalTransaction -> "снятия";
+            case WithdrawTransaction withdrawTransaction -> "снятия";
             default -> throw new UnknownTransactionTypeException();
         };
 

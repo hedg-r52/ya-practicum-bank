@@ -1,6 +1,5 @@
 package ru.yandex.practicum.bank.accounts.mapper;
 
-import lombok.AllArgsConstructor;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

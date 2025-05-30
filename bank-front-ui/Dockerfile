@@ -7,4 +7,4 @@ FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 COPY --from=builder /app/bank-front-ui/build/libs/*.jar app.jar
 EXPOSE 8083
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]

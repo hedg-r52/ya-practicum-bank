@@ -6,7 +6,6 @@ import reactor.core.publisher.Flux;
 import ru.yandex.practicum.bank.cash.model.TransactionStatus;
 import ru.yandex.practicum.bank.cash.repository.dto.TransactionRepositoryDto;
 
-import java.util.Collection;
 import java.util.List;
 
 @Repository

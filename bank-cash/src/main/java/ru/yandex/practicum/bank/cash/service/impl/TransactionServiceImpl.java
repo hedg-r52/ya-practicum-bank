@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.cash.dto.CashTransactionRequestDto;
@@ -64,7 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
                         }))
                 .map(transactionMapper::map)
                 .onErrorResume(e -> {
-                    log.error("Something Went Wrong during validate transaction process");
+                    log.error("Something Went Wrong: " + e.getMessage());
                     return Mono.empty();
                 });
     }
@@ -108,8 +109,8 @@ public class TransactionServiceImpl implements TransactionService {
         return switch (transaction) {
             case DepositTransaction depositTransaction ->
                     blockerClient.validate(transactionMapper.map(depositTransaction));
-            case WithdrawTransaction withdrawalTransaction ->
-                    blockerClient.validate(transactionMapper.map(withdrawalTransaction));
+            case WithdrawTransaction withdrawTransaction ->
+                    blockerClient.validate(transactionMapper.map(withdrawTransaction));
             default -> throw new IllegalStateException("Unexpected value: " + transaction);
         };
     }
@@ -120,7 +121,7 @@ public class TransactionServiceImpl implements TransactionService {
                     DepositMoneyToAccount.builder()
                             .amount(transaction.getAmount())
                             .build());
-            case WithdrawTransaction withdrawalTransaction -> accountClient.withdrawMoney(transaction.getAccountId(),
+            case WithdrawTransaction withdrawTransaction -> accountClient.withdrawMoney(transaction.getAccountId(),
                     WithdrawMoneyFromAccount.builder()
                             .amount(transaction.getAmount())
                             .build());

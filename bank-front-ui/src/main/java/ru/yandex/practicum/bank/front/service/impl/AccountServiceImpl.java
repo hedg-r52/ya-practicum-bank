@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.clients.accounts.AccountClient;
-import ru.yandex.practicum.bank.clients.accounts.dto.accounts.AccountResponse;
 import ru.yandex.practicum.bank.front.dto.account.AccountCreateRequestDto;
 import ru.yandex.practicum.bank.front.dto.account.AccountResponseDto;
 import ru.yandex.practicum.bank.front.mapper.AccountMapper;

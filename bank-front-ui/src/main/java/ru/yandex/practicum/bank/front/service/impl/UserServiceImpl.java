@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService, ReactiveUserDetailsService 
     private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(@Value("${gateway_service_url}/api") String accountClientUrl,
+    public UserServiceImpl(@Value("${gateway_service_url}") String accountClientUrl,
                            WebClient webClient,
                            UserMapper userMapper) {
         this.accountClient = new AccountClient(accountClientUrl, webClient);
