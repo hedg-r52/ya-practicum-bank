@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 001-init-email-notifications-schema.yml
+      relativeToChangelogFile: true

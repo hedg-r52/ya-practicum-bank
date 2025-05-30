@@ -1,0 +1,20 @@
+FROM debian:bullseye-slim
+
+RUN apt-get update && \
+    apt-get install -y curl unzip openjdk-17-jdk && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV KEYCLOAK_VERSION=24.0.2
+
+RUN curl -fsSL -o keycloak.zip https://github.com/keycloak/keycloak/releases/download/${KEYCLOAK_VERSION}/keycloak-${KEYCLOAK_VERSION}.zip && \
+    unzip keycloak.zip && \
+    mv keycloak-${KEYCLOAK_VERSION} /opt/keycloak && \
+    rm keycloak.zip
+
+WORKDIR /opt/keycloak
+RUN /opt/keycloak/bin/kc.sh build
+
+ENV PATH="/opt/keycloak/bin:$PATH"
+
+CMD [ "kc.sh", "start-dev", "--import-realm" ]

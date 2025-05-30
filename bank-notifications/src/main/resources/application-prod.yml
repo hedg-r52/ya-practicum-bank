@@ -1,0 +1,35 @@
+server:
+  port: 8095
+
+mail:
+  username:
+  password:
+  smtp:
+    host: mailhog
+    port: 1025
+
+spring:
+  application:
+    name: bank-notifications
+  r2dbc:
+    url: r2dbc:postgresql://bank-postgres:5432/notifications
+    username: ${POSTGRESQL_USER:postgres}
+    password: ${POSTGRESQL_PASSWORD:postgres}
+  jpa:
+    show-sql: true
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yml
+    default-schema: public
+    url: jdbc:postgresql://bank-postgres:5432/notifications
+    user: ${POSTGRESQL_USER:postgres}
+    password: ${POSTGRESQL_PASSWORD:postgres}
+    enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/bank-realm
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bank-eureka-server:8761/eureka

@@ -1,0 +1,134 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: bank-gateway
+  cloud:
+    gateway:
+      forwarded-headers-strategy: native
+      routes:
+        - id: accounts
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/accounts/**,/api/user/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /${segment}
+            - name: TokenRelayKeycloak
+              args:
+                registrationId: accounts
+        - id: blocker
+          uri: http://localhost:8097
+          predicates:
+            - Path=/api/blocker/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+            - name: TokenRelayKeycloak
+              args:
+                registrationId: blocker
+        - id: cash
+          uri: http://localhost:8089
+          predicates:
+            - Path=/api/cash/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+            - name: TokenRelayKeycloak
+              args:
+                registrationId: cash
+        - id: exchange
+          uri: http://localhost:8093
+          predicates:
+            - Path=/api/exchange/rates/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /${segment}
+            - name: TokenRelayKeycloak
+              args:
+                registrationId: exchange
+        - id: notifications
+          uri: http://localhost:8095
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+            - name: TokenRelayKeycloak
+              args:
+                registrationId: notifications
+        - id: transfer
+          uri: http://localhost:8090
+          predicates:
+            - Path=/api/transfer/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+            - name: TokenRelayKeycloak
+              args:
+                registrationId: transfer
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: bank-gateway
+            client-secret: ${KEYCLOAK_GATEWAY_CLIENT_SECRET}
+            provider: keycloak
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8081/login/oauth2/code/keycloak
+            scope: openid, profile, email
+          accounts:
+            provider: keycloak
+            client-id: accounts
+            client-secret: jWn4G9dklMv6zT1Xp2eQ3Lz6oCq9Bd3f
+            scope: profile
+            authorization-grant-type: client_credentials
+          blocker:
+            provider: keycloak
+            client-id: blocker
+            client-secret: dtrO4p_U8eOwHP4n5gVUrRR_F3lz9ItkTFFvG_vO35c
+            scope: profile
+            authorization-grant-type: client_credentials
+          cash:
+            provider: keycloak
+            client-id: cash
+            client-secret: F0yxbi4TZB6yFVhPjsY5sO6gNDrXnbqu5rfrtbX1rV8
+            scope: profile
+            authorization-grant-type: client_credentials
+          exchange:
+            provider: keycloak
+            client-id: exchange
+            client-secret: Z2xL9HnB7uJvPpUqN1yX4eRsDfWcKoTzLmAbCyEiVrQgHxSdMw
+            scope: profile
+            authorization-grant-type: client_credentials
+          exchange-generator:
+            provider: keycloak
+            client-id: exchange_generator
+            client-secret: LHiAo3MYXcxttwOTpBFzkDt4txqDOfaIcfvHlZhpo7s
+            scope: profile
+            authorization-grant-type: client_credentials
+          notifications:
+            provider: keycloak
+            client-id: notifications
+            client-secret: XybzvWqtC9ngbmRv4FZZRXBl1f1Azmo62EUkaOH4Nn8
+            scope: profile
+            authorization-grant-type: client_credentials
+          transfer:
+            provider: keycloak
+            client-id: transfer
+            client-secret: N1y4UHwEPsMIziQR2qq2f6I_R0MYYFTpUPokCpVPSMQ
+            scope: profile
+            authorization-grant-type: client_credentials
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/bank-realm
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

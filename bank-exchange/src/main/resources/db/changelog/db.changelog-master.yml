@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 0001-init-exchange-rates-schema.yml
+      relativeToChangelogFile: true

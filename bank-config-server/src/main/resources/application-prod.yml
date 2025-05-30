@@ -1,0 +1,18 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: bank-config-server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config-repo/
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://bank-eureka-server:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true

@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_table_accounts
+      author: hedg-r52
+      preConditions:
+        - not:
+            tableExists:
+              schemaName: public
+              tableName: accounts
+      changes:
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: accounts
+            columnNames: user_id, currency
+            constraintName: user_currency_unique
+      rollback:
+        - dropTable:
+            tableName: accounts
+  - changeSet:
+      id: create_account_foreign_key_user_id
+      author: hedg-r52
+      preConditions:
+        - not:
+            foreignKeyConstraintExists:
+              foreignKeyName: fk_accounts_user_id
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: accounts
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_accounts_user_id
+            onDelete: CASCADE
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: accounts
+            constraintName: fk_accounts_user_id

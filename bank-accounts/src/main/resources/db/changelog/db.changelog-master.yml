@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: 001-init-users-schema.yml
+      relativeToChangelogFile: true
+  - include:
+      file: 002-init-accounts-schema.yml
+      relativeToChangelogFile: true

@@ -1,0 +1,244 @@
+
+services:
+  keycloak:
+    build:
+      context: .
+      dockerfile: Dockerfile.keycloak
+    container_name: keycloak
+    command: [ "./bin/kc.sh", "start-dev", "--import-realm" ]
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - ./keycloak/realm-config:/opt/keycloak/data/import
+#      - ./storage/keycloak:/opt/keycloak/data/h2
+    ports:
+      - "8080:8080"
+    networks:
+      - bank-network
+
+  bank-postgres:
+    image: postgres:17
+    container_name: bank-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db.init.sql:/docker-entrypoint-initdb.d/init.sql
+#      - ./storage/postgres:/var/lib/postgresql/data
+    networks:
+      - bank-network
+
+  eureka-server:
+    container_name: bank-eureka-server
+    build:
+      context: .
+      dockerfile: bank-eureka-server/Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    ports:
+      - "8761:8761"
+    networks:
+      - bank-network
+
+  config-server:
+    container_name: bank-config-server
+    build:
+      context: .
+      dockerfile: bank-config-server/Dockerfile
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka-server
+    networks:
+      - bank-network
+
+  bank-gateway:
+    container_name: bank-gateway
+    build:
+      context: .
+      dockerfile: bank-gateway/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_GATEWAY_CLIENT_SECRET}
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  bank-accounts:
+    container_name: bank-accounts
+    build:
+      context: .
+      dockerfile: bank-accounts/Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  bank-front-ui:
+    container_name: bank-front-ui
+    build:
+      context: .
+      dockerfile: bank-front-ui/Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      KEYCLOAK_FRONT_CLIENT_SECRET: ${KEYCLOAK_FRONT_CLIENT_SECRET}
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  bank-cash:
+    container_name: bank-cash
+    build:
+      context: .
+      dockerfile: bank-cash/Dockerfile
+    ports:
+      - "8089:8089"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      bank-accounts:
+        condition: service_started
+    networks:
+      - bank-network
+
+  bank-transfer:
+    container_name: bank-transfer
+    build:
+      context: .
+      dockerfile: bank-transfer/Dockerfile
+    ports:
+      - "8090:8090"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      bank-accounts:
+        condition: service_started
+    networks:
+      - bank-network
+
+  bank-blocker:
+    container_name: bank-blocker
+    build:
+      context: .
+      dockerfile: bank-blocker/Dockerfile
+    ports:
+      - "8097:8097"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  bank-exchange-generator:
+    container_name: bank-exchange-generator
+    build:
+      context: .
+      dockerfile: bank-exchange-generator/Dockerfile
+    ports:
+      - "8092:8092"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  bank-exchange:
+    container_name: bank-exchange
+    build:
+      context: .
+      dockerfile: bank-exchange/Dockerfile
+    ports:
+      - "8093:8093"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      bank-accounts:
+        condition: service_started
+      bank-exchange-generator:
+        condition: service_started
+    networks:
+      - bank-network
+
+  bank-notifications:
+    container_name: bank-notifications
+    build:
+      context: .
+      dockerfile: bank-notifications/Dockerfile
+    ports:
+      - "8095:8095"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - bank-network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - bank-network
+
+
+networks:
+  bank-network:
+    driver: bridge
