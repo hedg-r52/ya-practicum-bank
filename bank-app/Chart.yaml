@@ -1,0 +1,12 @@
+apiVersion: v2
+name: bank-app
+description: Umbrella chart for Bank App
+version: 0.1.0
+
+dependencies:
+  - name: keycloak
+    version: 1.0.0
+    repository: file://charts/keycloak
+#  - name: bank-postgresql
+#    version: 16.7.9
+#    repository: https://charts.bitnami.com/bitnami

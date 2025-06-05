@@ -4,11 +4,6 @@ server:
 spring:
   application:
     name: bank-exchange
-  cloud:
-    config:
-      uri: http://bank-config-server:8888
-  config:
-    import: optional:configserver:http://bank-config-server:8888
   r2dbc:
     url: r2dbc:postgresql://bank-postgres:5432/exchange_rates
     username: ${POSTGRESQL_USER:postgres}
@@ -25,8 +20,3 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://keycloak:8080/realms/bank-realm
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://bank-eureka-server:8761/eureka

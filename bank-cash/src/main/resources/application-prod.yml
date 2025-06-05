@@ -29,8 +29,3 @@ clients:
     uri: ${gateway_service_url}
   notifications:
     uri: ${gateway_service_url}
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://bank-eureka-server:8761/eureka

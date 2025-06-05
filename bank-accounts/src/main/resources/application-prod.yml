@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: configserver:http://config-server:8888
   application:
     name: bank-accounts
   security:
@@ -30,11 +28,6 @@ spring:
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     enabled: true
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka
 
 logging:
   level:

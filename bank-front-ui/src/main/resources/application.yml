@@ -31,13 +31,6 @@ spring:
             user-info-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/userinfo
             user-name-attribute: preferred_username
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
 gateway_service_url: http://localhost:8081/api
 
 clients:

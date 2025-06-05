@@ -1,0 +1,21 @@
+#bank-postgresql:
+#  enabled: true
+#  auth:
+#    username: postgres
+#    password: postgres
+#  primary:
+#    initdb:
+#      scripts:
+#        init.sql: |
+#          create database accounts;
+#          create database notifications;
+#          create database cash;
+#          create database exchange;
+#          create database transfer;
+#  services:
+#    ports:
+#      postgresql: 5432
+#
+#  persistence:
+#    enabled: true
+#    size: 500Mi
