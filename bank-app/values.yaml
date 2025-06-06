@@ -23,3 +23,30 @@ postgresql:
   persistence:
     enabled: true
     size: 500Mi
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - host: bank-app.local
+      paths:
+        - path: /api(/|$)(.*)
+          pathType: Prefix
+
+bank-accounts:
+  image:
+    repository: bank-accounts
+    tag: latest
+  ingress:
+    enabled: true
+    hostname: bank-accounts.local
+
+
+bank-front-ui:
+  image:
+    repository: bank-front-ui
+    tag: latest
+  ingress:
+    enabled: true
+    hostname: bank-front-ui.local

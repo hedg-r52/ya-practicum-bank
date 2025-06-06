@@ -23,7 +23,7 @@ import ru.yandex.practicum.bank.accounts.service.AccountService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/accounts")
+@RequestMapping("/api/accounts")
 public class AccountsController {
 
     private final AccountService accountService;

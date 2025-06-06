@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: bank-accounts
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8082
+
+env:
+  - name: LOGGING_LEVEL_ROOT
+    value: DEBUG
+  - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY
+    value: DEBUG
+
+postgresql:
+  username: postgres
+  password: postgres
+
+config:
+  keycloak:
+    host: "bank-keycloak"
+    realm: "bank-realm"
+  # port 8080
+  keycloak_url: "http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/bank-realm"
+  # port 5432
+  database_url: "postgresql://{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local/accounts"

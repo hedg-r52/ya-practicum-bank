@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: bank-front-ui
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  - name: LOGGING_LEVEL_ROOT
+    value: DEBUG
+  - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY
+    value: DEBUG
+  - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_REACTIVE_FUNCTION_CLIENT_ExchangeFunctions
+    value: TRACE
+  - name: LOGGING_LEVEL_REACTOR_NETTY_HTTP_CLIENT
+    value: DEBUG
+
+config:
+  keycloak:
+    host: "bank-keycloak"
+    realm: "bank-realm"
+  keycloak_realm_uri: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/bank-realm
+  client_account_uri: http://{{ .Release.Name }}-bank-accounts.{{ .Release.Namespace }}.svc.cluster.local:8082/api

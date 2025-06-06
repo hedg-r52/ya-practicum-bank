@@ -3,18 +3,6 @@
   "enabled": true,
   "clients": [
     {
-      "clientId": "gateway",
-      "secret": "QoFkoGrI1bKehsnK1Ksz4kplW0RxLrbrvK6OHEFUXQkUuFKkZKaNmSkOd+CyN2kV",
-      "redirectUris": ["http://localhost:8081/*"],
-      "webOrigins": ["*"],
-      "publicClient": false,
-      "protocol": "openid-connect",
-      "standardFlowEnabled": true,
-      "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
-      "serviceAccountsEnabled": true
-    },
-    {
       "clientId": "bank-front-ui",
       "secret": "QZ7KzL1OpXEy5c7Nc3hG9JQp6XLsEaEXzRUu7LkoGd3RyzHhYvA5byzH5JqDjU8L",
       "redirectUris": ["http://localhost:8085/login/oauth2/code/*"],
@@ -24,7 +12,7 @@
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
-      "serviceAccountsEnabled": false
+      "serviceAccountsEnabled": true
     },
     {
       "clientId": "accounts",

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bank-front-ui.fullname" . }}-config
+  labels:
+    {{- include "bank-front-ui.labels" . | nindent 4 }}
+data:
+  KEYCLOAK_BANK_REALM_URI: {{ tpl .Values.config.keycloak_realm_uri . | quote }}
+  CLIENT_ACCOUNTS_URI: {{ tpl .Values.config.client_account_uri . | quote }}
+

@@ -5,7 +5,7 @@ clients:
   exchange:
     uri: ${gateway_service_url}
 
-gateway_service_url: http://localhost:8081/api
+gateway_service_url: ${COMMON_SERVICE_API_URL}
 
 spring:
   application:

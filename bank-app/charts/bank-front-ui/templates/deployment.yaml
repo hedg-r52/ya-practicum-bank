@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bank-front-ui.fullname" . }}
+  labels:
+    {{- include "bank-front-ui.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "bank-front-ui.name" . }}
+  template:
+    metadata:
+      labels:
+        app: bank-front-ui
+        app.kubernetes.io/instance: bank-app
+        app.kubernetes.io/name: bank-front-ui
+    spec:
+      initContainers:
+        - name: wait-for-keycloak
+          image: curlimages/curl:8.7.1
+          command: [ "sh", "-c" ]
+          args:
+            - |
+              echo "Waiting for Keycloak at http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080...";
+              until curl -s -f http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}/.well-known/openid-configuration; do
+                echo "Keycloak not ready. Sleeping...";
+                sleep 5;
+              done
+              echo "Keycloak is ready!";
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "bank-front-ui.fullname" . }}-config
+          env:
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}/protocol/openid-connect/certs
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

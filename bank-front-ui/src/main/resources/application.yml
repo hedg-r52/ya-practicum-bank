@@ -9,36 +9,24 @@ spring:
     oauth2:
       client:
         registration:
-          gateway:
-            client-id: gateway
-            client-secret: QoFkoGrI1bKehsnK1Ksz4kplW0RxLrbrvK6OHEFUXQkUuFKkZKaNmSkOd+CyN2kV
-            authorization-grant-type: client_credentials
-            scope: openid
-            provider: keycloak
-
           keycloak:
             client-id: bank-front-ui
             client-secret: QZ7KzL1OpXEy5c7Nc3hG9JQp6XLsEaEXzRUu7LkoGd3RyzHhYvA5byzH5JqDjU8L
-            authorization-grant-type: authorization_code
+            authorization-grant-type: client_credentials
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: openid, profile
             provider: keycloak
 
         provider:
           keycloak:
-            authorization-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/auth
-            token-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/token
-            user-info-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/userinfo
-            user-name-attribute: preferred_username
-
-gateway_service_url: http://localhost:8081/api
+            issuer-uri: ${KEYCLOAK_BANK_REALM_URI}
 
 clients:
   accounts:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_ACCOUNTS_URI}
   exchange:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_ACCOUNTS_URI}
   cash:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_ACCOUNTS_URI}
   transfer:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_ACCOUNTS_URI}

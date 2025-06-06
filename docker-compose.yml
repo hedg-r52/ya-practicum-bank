@@ -48,10 +48,6 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
     networks:
       - bank-network
 
@@ -80,10 +76,6 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
       bank-accounts:
         condition: service_started
     networks:
@@ -98,10 +90,6 @@ services:
       - "8090:8090"
     depends_on:
       keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
         condition: service_healthy
       bank-accounts:
         condition: service_started
@@ -118,10 +106,6 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
     networks:
       - bank-network
 
@@ -132,11 +116,6 @@ services:
       dockerfile: bank-exchange-generator/Dockerfile
     ports:
       - "8092:8092"
-    depends_on:
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
     networks:
       - bank-network
 
@@ -149,10 +128,6 @@ services:
       - "8093:8093"
     depends_on:
       keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
         condition: service_healthy
       bank-accounts:
         condition: service_started
@@ -170,10 +145,6 @@ services:
       - "8095:8095"
     depends_on:
       keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
         condition: service_healthy
     networks:
       - bank-network

@@ -1,3 +1,6 @@
+server:
+  port: 8082
+
 spring:
   application:
     name: bank-accounts
@@ -5,9 +8,9 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/bank-realm
+          issuer-uri: http://localhost:8080/realms/bank-realm
   r2dbc:
-    url: r2dbc:postgresql://bank-postgres:5432/accounts
+    url: r2dbc:postgresql://localhost:5432/accounts
     username: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     pool:
@@ -18,19 +21,13 @@ spring:
       max-life-time: 10m
       validation-query: SELECT 1
   datasource:
-    url: jdbc:postgresql://bank-postgres:5432/accounts
+    url: jdbc:postgresql://localhost:5432/accounts
   jpa:
     show-sql: true
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yml
     default-schema: public
-    url: jdbc:postgresql://bank-postgres:5432/accounts
+    url: jdbc:postgresql://localhost:5432/accounts
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     enabled: true
-
-logging:
-  level:
-    root: INFO
-    org.springframework.web: DEBUG
-    org.springframework.security: DEBUG

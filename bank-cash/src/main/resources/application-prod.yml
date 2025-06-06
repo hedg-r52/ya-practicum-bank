@@ -20,7 +20,7 @@ spring:
         jwt:
           issuer-uri: http://keycloak:8080/realms/bank-realm
 
-gateway_service_url: http://bank-gateway:8081/api
+gateway_service_url: ${COMMON_SERVICE_API_URL}
 
 clients:
   accounts:

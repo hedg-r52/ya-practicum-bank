@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bank-accounts.fullname" . }}
+  labels:
+    app: {{ include "bank-accounts.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "bank-accounts.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "bank-accounts.name" . }}
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:17
+          command: [ 'sh', '-c', 'until pg_isready -h {{ .Release.Name }}-postgresql -p 5432; do echo waiting for postgres; sleep 2; done;' ]
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "bank-accounts.fullname" . }}-config
+          env:
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}/protocol/openid-connect/certs
