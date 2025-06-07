@@ -16,3 +16,9 @@ dependencies:
   - name: bank-front-ui
     version: 0.1.0
     repository: file://charts/bank-front-ui
+  - name: bank-exchange
+    version: 0.1.0
+    repository: file://charts/bank-exchange
+  - name: bank-exchange-generator
+    version: 0.1.0
+    repository: file://charts/bank-exchange-generator

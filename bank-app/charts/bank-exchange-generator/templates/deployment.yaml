@@ -1,23 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "bank-accounts.fullname" . }}
+  name: {{ include "bank-exchange-generator.fullname" . }}
   labels:
-    app: {{ include "bank-accounts.name" . }}
+    {{- include "bank-exchange-generator.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "bank-accounts.name" . }}
+      app: {{ include "bank-exchange-generator.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "bank-accounts.name" . }}
+        app: {{ include "bank-exchange-generator.name" . }}
     spec:
       initContainers:
-        - name: wait-for-postgres
-          image: postgres:17
-          command: [ 'sh', '-c', 'until pg_isready -h {{ .Release.Name }}-postgresql -p 5432; do echo waiting for postgres; sleep 2; done;' ]
+        - name: wait-for-exchange
+          image: curlimages/curl:8.5.0
+          command:
+            - sh
+            - -c
+            - >
+              until curl -s -f http://{{ .Release.Name }}-bank-exchange.{{ .Release.Namespace }}.svc.cluster.local:8093/actuator/health;
+              do echo "Waiting for bank-exchange..."; sleep 2; done
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -26,12 +31,8 @@ spec:
             - containerPort: {{ .Values.service.port }}
           envFrom:
             - configMapRef:
-                name: {{ include "bank-accounts.fullname" . }}-config
+                name: {{ include "bank-exchange-generator.fullname" . }}-config
           env:
-            {{- range .Values.env }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
-            {{- end }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
               value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
@@ -52,3 +53,4 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+

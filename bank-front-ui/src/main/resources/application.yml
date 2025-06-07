@@ -25,7 +25,7 @@ clients:
   accounts:
     uri: ${CLIENT_ACCOUNTS_URI}
   exchange:
-    uri: ${CLIENT_ACCOUNTS_URI}
+    uri: ${CLIENT_EXCHANGE_URI}
   cash:
     uri: ${CLIENT_ACCOUNTS_URI}
   transfer:

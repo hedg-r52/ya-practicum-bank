@@ -5,13 +5,13 @@ spring:
   application:
     name: bank-exchange
   r2dbc:
-    url: r2dbc:postgresql://bank-postgres:5432/exchange_rates
+    url: r2dbc:postgresql://localhost:5432/exchange_rates
     username: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
   jpa:
     show-sql: true
   liquibase:
-    url: jdbc:postgresql://bank-postgres:5432/exchange_rates
+    url: jdbc:postgresql://localhost:5432/exchange_rates
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     change-log: classpath:/db/changelog/db.changelog-master.yml
@@ -19,4 +19,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/bank-realm
+          issuer-uri: http://localhost:8080/realms/bank-realm

@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: bank-exchange-generator
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8091
+
+config:
+  keycloak:
+    realm: "bank-realm"
+  keycloak_url: "http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/bank-realm"
+  client_exchange_uri: http://{{ .Release.Name }}-bank-exchange.{{ .Release.Namespace }}.svc.cluster.local:8093/api

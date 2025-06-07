@@ -24,14 +24,12 @@ spring:
             user-info-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/userinfo
             user-name-attribute: preferred_username
 
-gateway_service_url: ${COMMON_SERVICE_API_URL}
-
 clients:
   accounts:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_ACCOUNTS_URI}
   exchange:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_EXCHANGE_URI}
   cash:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_CASH_URI}
   transfer:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_TRANSFER_URI}

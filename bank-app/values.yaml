@@ -14,8 +14,8 @@ postgresql:
           CREATE DATABASE accounts;
           CREATE DATABASE notifications;
           CREATE DATABASE cash;
-          CREATE DATABASE exchange;
-          CREATE DATABASE transfer;
+          CREATE DATABASE exchange_rates;
+          CREATE DATABASE transfers;
   services:
     ports:
       postgresql: 5432
@@ -50,3 +50,19 @@ bank-front-ui:
   ingress:
     enabled: true
     hostname: bank-front-ui.local
+
+bank-exchange:
+  image:
+    repository: bank-exchange
+    tag: latest
+  ingress:
+    enabled: true
+    hostname: bank-exchange.local
+
+bank-exchange-generator:
+  image:
+    repository: bank-exchange-generator
+    tag: latest
+  ingress:
+    enabled: true
+    hostname: bank-exchange-generator.local

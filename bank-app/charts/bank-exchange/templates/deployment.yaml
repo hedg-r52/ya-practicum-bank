@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "bank-accounts.fullname" . }}
+  name: {{ include "bank-exchange.fullname" . }}
   labels:
-    app: {{ include "bank-accounts.name" . }}
+    {{- include "bank-exchange.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "bank-accounts.name" . }}
+      app: {{ include "bank-exchange.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "bank-accounts.name" . }}
+        app: {{ include "bank-exchange.name" . }}
     spec:
       initContainers:
         - name: wait-for-postgres
@@ -26,12 +26,8 @@ spec:
             - containerPort: {{ .Values.service.port }}
           envFrom:
             - configMapRef:
-                name: {{ include "bank-accounts.fullname" . }}-config
+                name: {{ include "bank-exchange.fullname" . }}-config
           env:
-            {{- range .Values.env }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
-            {{- end }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
               value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
@@ -52,3 +48,4 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+

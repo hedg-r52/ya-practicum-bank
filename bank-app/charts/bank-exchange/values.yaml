@@ -1,13 +1,13 @@
 replicaCount: 1
 
 image:
-  repository: bank-accounts
+  repository: bank-exchange
   tag: latest
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
-  port: 8082
+  port: 8093
 
 env:
   - name: LOGGING_LEVEL_ROOT
@@ -21,7 +21,6 @@ postgresql:
 
 config:
   keycloak:
-    host: "bank-keycloak"
     realm: "bank-realm"
   keycloak_url: "http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/bank-realm"
-  database_url: "postgresql://{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local/accounts"
+  database_url: "postgresql://{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local/exchange_rates"
