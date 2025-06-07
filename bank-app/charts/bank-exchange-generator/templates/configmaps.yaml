@@ -5,5 +5,5 @@ metadata:
   labels:
     {{- include "bank-exchange-generator.labels" . | nindent 4 }}
 data:
-  KEYCLOAK_ISSUER_URI: {{ tpl .Values.config.keycloak_url . | quote }}
-  CLIENT_EXCHANGE_URI: {{ tpl .Values.config.client_exchange_uri . | quote }}
+  KEYCLOAK_ISSUER_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
+  CLIENT_EXCHANGE_URI: {{ tpl .Values.global.clients.client_exchange_uri . | quote }}

@@ -23,7 +23,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.global.ports.accounts_port }}
           envFrom:
             - configMapRef:
                 name: {{ include "bank-accounts.fullname" . }}-config
@@ -33,9 +33,9 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
-              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/{{ .Values.global.keycloak.realm }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
-              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/{{ .Values.config.keycloak.realm }}/protocol/openid-connect/certs
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/{{ .Values.global.keycloak.realm }}/protocol/openid-connect/certs
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

@@ -7,20 +7,3 @@ image:
 
 service:
   type: ClusterIP
-  port: 8093
-
-env:
-  - name: LOGGING_LEVEL_ROOT
-    value: DEBUG
-  - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY
-    value: DEBUG
-
-postgresql:
-  username: postgres
-  password: postgres
-
-config:
-  keycloak:
-    realm: "bank-realm"
-  keycloak_url: "http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080/realms/bank-realm"
-  database_url: "postgresql://{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local/exchange_rates"

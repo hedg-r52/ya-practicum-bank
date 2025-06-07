@@ -16,4 +16,4 @@ spec:
               service:
                 name: {{ .Release.Name }}-bank-mailhog
                 port:
-                  number: 8025
+                  number: {{ .Values.global.ports.mailhog_http_port }}

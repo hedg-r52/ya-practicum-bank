@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "bank-front-ui.labels" . | nindent 4 }}
 data:
-  KEYCLOAK_BANK_REALM_URI: {{ tpl .Values.config.keycloak_realm_uri . | quote }}
-  CLIENT_ACCOUNTS_URI: {{ tpl .Values.config.client_account_uri . | quote }}
-  CLIENT_EXCHANGE_URI: {{ tpl .Values.config.client_exchange_uri . | quote }}
+  KEYCLOAK_BANK_REALM_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
+  CLIENT_ACCOUNTS_URI: {{ tpl .Values.global.clients.client_account_uri . | quote }}
+  CLIENT_EXCHANGE_URI: {{ tpl .Values.global.clients.client_exchange_uri . | quote }}
 

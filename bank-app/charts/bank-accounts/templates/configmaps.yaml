@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "bank-accounts.labels" . | nindent 4 }}
 data:
-  KEYCLOAK_ISSUER_URI: {{ tpl .Values.config.keycloak_url . | quote }}
-  SPRING_DATASOURCE_URL: {{ tpl .Values.config.database_url . | quote }}
-  POSTGRESQL_USER: {{ .Values.postgresql.username | quote }}
-  POSTGRESQL_PASSWORD: {{ .Values.postgresql.password | quote }}
+  KEYCLOAK_ISSUER_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
+  SPRING_DATASOURCE_URL: {{ tpl (printf "postgresql://%s/accounts" .Values.global.uri.database) . | quote }}
+  POSTGRESQL_USER: {{ .Values.global.postgresql.username | quote }}
+  POSTGRESQL_PASSWORD: {{ .Values.global.postgresql.password | quote }}

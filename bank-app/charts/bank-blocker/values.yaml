@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: bank-exchange-generator
+  repository: bank-blocker
   tag: latest
   pullPolicy: IfNotPresent
 

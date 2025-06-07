@@ -5,14 +5,14 @@ mail:
   username:
   password:
   smtp:
-    host: localhost
+    host: mailhog
     port: 1025
 
 spring:
   application:
     name: bank-notifications
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/notifications
+    url: r2dbc:${SPRING_DATASOURCE_URL}
     username: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
   jpa:
@@ -20,7 +20,7 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yml
     default-schema: public
-    url: jdbc:postgresql://localhost:5432/notifications
+    url: jdbc:${SPRING_DATASOURCE_URL}
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     enabled: true
@@ -28,4 +28,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bank-realm
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}

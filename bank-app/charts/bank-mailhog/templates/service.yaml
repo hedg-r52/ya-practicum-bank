@@ -7,8 +7,8 @@ spec:
     app: {{ include "bank-mailhog.name" . }}
   ports:
     - name: smtp
-      port: 1025
-      targetPort: 1025
+      port: {{ .Values.global.ports.mailhog_smtp_port }}
+      targetPort: {{ .Values.global.ports.mailhog_smtp_port }}
     - name: http
-      port: 8025
-      targetPort: 8025
+      port: {{ .Values.global.ports.mailhog_http_port }}
+      targetPort: {{ .Values.global.ports.mailhog_http_port }}

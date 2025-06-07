@@ -1,3 +1,28 @@
+global:
+  ports:
+    front_ui_port: 80
+    mailhog_smtp_port: 1025
+    mailhog_http_port: 8025
+    keycloak_port: 8080
+    accounts_port: 8082
+    cash_port: 8089
+    transfer_port: 8090
+    exchange_generator_port: 8091
+    exchange_port: 8093
+    notifications_port: 8095
+    blocker_port: 8097
+  uri:
+    keycloak_issuer: "http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/bank-realm"
+    database: "{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local"
+  postgresql:
+    username: postgres
+    password: postgres
+  keycloak:
+    realm: "bank-realm"
+  clients:
+    client_account_uri: http://{{ .Release.Name }}-bank-accounts.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.accounts_port }}/api
+    client_exchange_uri: http://{{ .Release.Name }}-bank-exchange.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.exchange_port }}/api
+
 postgresql:
   image:
     tag: 17
@@ -66,19 +91,3 @@ bank-exchange-generator:
   ingress:
     enabled: true
     hostname: bank-exchange-generator.local
-
-mailhog:
-  service:
-    type: ClusterIP
-    ports:
-      smtp: 1025
-      http: 8025
-
-  ingress:
-    enabled: true
-    hostname: bank-mailhog.local
-    path: /
-    pathType: Prefix
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
-    ingressClassName: nginx
