@@ -66,3 +66,19 @@ bank-exchange-generator:
   ingress:
     enabled: true
     hostname: bank-exchange-generator.local
+
+mailhog:
+  service:
+    type: ClusterIP
+    ports:
+      smtp: 1025
+      http: 8025
+
+  ingress:
+    enabled: true
+    hostname: bank-mailhog.local
+    path: /
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    ingressClassName: nginx

@@ -22,3 +22,7 @@ dependencies:
   - name: bank-exchange-generator
     version: 0.1.0
     repository: file://charts/bank-exchange-generator
+  - name: bank-mailhog
+    version: 0.1.0
+    repository: file://charts/bank-mailhog
+
