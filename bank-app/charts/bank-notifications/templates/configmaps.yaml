@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bank-notifications.fullname" . }}-config
+  labels:
+    {{- include "bank-notifications.labels" . | nindent 4 }}
+data:
+  KEYCLOAK_ISSUER_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
+  SPRING_DATASOURCE_URL: {{ tpl (printf "postgresql://%s/notifications" .Values.global.uri.database) . | quote }}
+  POSTGRESQL_USER: {{ .Values.global.postgresql.username | quote }}
+  POSTGRESQL_PASSWORD: {{ .Values.global.postgresql.password | quote }}
+  MAILHOG_HOST: {{ tpl .Values.global.uri.mailhog . | quote}}

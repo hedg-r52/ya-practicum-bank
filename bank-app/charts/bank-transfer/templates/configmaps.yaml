@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bank-transfer.fullname" . }}-config
+  labels:
+    {{- include "bank-transfer.labels" . | nindent 4 }}
+data:
+  KEYCLOAK_BANK_REALM_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
+  CLIENT_ACCOUNTS_URI: {{ tpl .Values.global.clients.client_account_uri . | quote }}
+  CLIENT_EXCHANGE_URI: {{ tpl .Values.global.clients.client_exchange_uri . | quote }}
+  CLIENT_BLOCKER_URI: {{ tpl .Values.global.clients.client_blocker_uri . | quote }}
+  CLIENT_NOTIFICATIONS_URI: {{ tpl .Values.global.clients.client_notifications_uri . | quote }}
+  SPRING_DATASOURCE_URL: {{ tpl (printf "postgresql://%s/transfers" .Values.global.uri.database) . | quote }}
+  POSTGRESQL_USER: {{ .Values.global.postgresql.username | quote }}
+  POSTGRESQL_PASSWORD: {{ .Values.global.postgresql.password | quote }}

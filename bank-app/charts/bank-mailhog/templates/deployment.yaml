@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bank-mailhog.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "bank-mailhog.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "bank-mailhog.name" . }}
+    spec:
+      containers:
+        - name: mailhog
+          image: mailhog/mailhog:latest
+          ports:
+            - containerPort: {{ .Values.global.ports.mailhog_smtp_port }}
+            - containerPort: {{ .Values.global.ports.mailhog_http_port }}

@@ -33,4 +33,21 @@ public class SecurityConfig {
                 )
                 .build();
     }
+//
+//    @Bean
+//    public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
+//            ReactiveClientRegistrationRepository clients,
+//            ReactiveOAuth2AuthorizedClientService clientService) {
+//
+//        ReactiveOAuth2AuthorizedClientProvider provider =
+//                ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+//                        .clientCredentials()
+//                        .build();
+//
+//        DefaultReactiveOAuth2AuthorizedClientManager manager =
+//                new DefaultReactiveOAuth2AuthorizedClientManager(clients, clientService);
+//        manager.setAuthorizedClientProvider(provider);
+//
+//        return manager;
+//    }
 }

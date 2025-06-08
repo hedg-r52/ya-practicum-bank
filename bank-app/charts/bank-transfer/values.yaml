@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: bank-transfer
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+
+env:
+  - name: LOGGING_LEVEL_ROOT
+    value: DEBUG
+  - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY
+    value: DEBUG

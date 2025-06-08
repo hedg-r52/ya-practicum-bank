@@ -17,7 +17,7 @@ import ru.yandex.practicum.bank.exchange.service.ExchangeService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/exchange/rates")
+@RequestMapping("/api/exchange/rates")
 @RequiredArgsConstructor
 public class ExchangeController {
 

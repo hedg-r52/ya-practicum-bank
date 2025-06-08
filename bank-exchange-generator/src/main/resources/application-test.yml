@@ -1,0 +1,15 @@
+server:
+  port: 8091
+
+clients:
+  exchange:
+    uri: ${CLIENT_EXCHANGE_URI}
+
+spring:
+  application:
+    name: bank-exchange-generator
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm

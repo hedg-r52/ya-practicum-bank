@@ -16,7 +16,7 @@ import ru.yandex.practicum.bank.blocker.mapper.TransactionMapper;
 import ru.yandex.practicum.bank.blocker.service.BlockerService;
 
 @RestController
-@RequestMapping("/blocker")
+@RequestMapping("/api/blocker")
 @RequiredArgsConstructor
 public class BlockerController {
 

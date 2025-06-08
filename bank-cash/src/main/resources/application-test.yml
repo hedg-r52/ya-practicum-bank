@@ -1,0 +1,31 @@
+server:
+  port: 8089
+spring:
+  application:
+    name: bank-cash
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/cash
+    username: ${POSTGRESQL_USER:postgres}
+    password: ${POSTGRESQL_PASSWORD:postgres}
+  jpa:
+    show-sql: true
+  liquibase:
+    url: jdbc:postgresql://localhost:5432/cash
+    user: ${POSTGRESQL_USER:postgres}
+    password: ${POSTGRESQL_PASSWORD:postgres}
+    change-log: classpath:/db/changelog/db.changelog-master.yml
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm
+
+gateway_service_url: ${COMMON_SERVICE_API_URL}
+
+clients:
+  accounts:
+    uri: ${gateway_service_url}
+  blocker:
+    uri: ${gateway_service_url}
+  notifications:
+    uri: ${gateway_service_url}

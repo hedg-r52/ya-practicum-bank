@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bank-exchange-generator.fullname" . }}
+  labels:
+    {{- include "bank-exchange-generator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "bank-exchange-generator.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "bank-exchange-generator.name" . }}
+    spec:
+      initContainers:
+        - name: wait-for-exchange
+          image: curlimages/curl:8.5.0
+          command:
+            - sh
+            - -c
+            - >
+              until curl -s -f http://{{ .Release.Name }}-bank-exchange.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.exchange_port }}/actuator/health;
+              do echo "Waiting for bank-exchange..."; sleep 2; done
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.global.ports.exchange_generator_port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "bank-exchange-generator.fullname" . }}-config
+          env:
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/{{ .Values.global.keycloak.realm }}
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+              value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/{{ .Values.global.keycloak.realm }}/protocol/openid-connect/certs
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+

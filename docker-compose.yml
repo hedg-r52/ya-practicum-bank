@@ -38,57 +38,6 @@ services:
     networks:
       - bank-network
 
-  eureka-server:
-    container_name: bank-eureka-server
-    build:
-      context: .
-      dockerfile: bank-eureka-server/Dockerfile
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-    ports:
-      - "8761:8761"
-    networks:
-      - bank-network
-
-  config-server:
-    container_name: bank-config-server
-    build:
-      context: .
-      dockerfile: bank-config-server/Dockerfile
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-    ports:
-      - "8888:8888"
-    depends_on:
-      - eureka-server
-    networks:
-      - bank-network
-
-  bank-gateway:
-    container_name: bank-gateway
-    build:
-      context: .
-      dockerfile: bank-gateway/Dockerfile
-    ports:
-      - "8081:8081"
-    environment:
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_GATEWAY_CLIENT_SECRET}
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-    networks:
-      - bank-network
-
   bank-accounts:
     container_name: bank-accounts
     build:
@@ -98,10 +47,6 @@ services:
       - "8082:8082"
     depends_on:
       keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
         condition: service_healthy
     networks:
       - bank-network
@@ -131,10 +76,6 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
       bank-accounts:
         condition: service_started
     networks:
@@ -149,10 +90,6 @@ services:
       - "8090:8090"
     depends_on:
       keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
         condition: service_healthy
       bank-accounts:
         condition: service_started
@@ -169,10 +106,6 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
     networks:
       - bank-network
 
@@ -183,11 +116,6 @@ services:
       dockerfile: bank-exchange-generator/Dockerfile
     ports:
       - "8092:8092"
-    depends_on:
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
     networks:
       - bank-network
 
@@ -200,10 +128,6 @@ services:
       - "8093:8093"
     depends_on:
       keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
         condition: service_healthy
       bank-accounts:
         condition: service_started
@@ -221,10 +145,6 @@ services:
       - "8095:8095"
     depends_on:
       keycloak:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      eureka-server:
         condition: service_healthy
     networks:
       - bank-network
