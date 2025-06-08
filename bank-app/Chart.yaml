@@ -31,6 +31,9 @@ dependencies:
   - name: bank-cash
     version: 0.1.0
     repository: file://charts/bank-cash
+  - name: bank-transfer
+    version: 0.1.0
+    repository: file://charts/bank-transfer
   - name: bank-mailhog
     version: 0.1.0
     repository: file://charts/bank-mailhog
