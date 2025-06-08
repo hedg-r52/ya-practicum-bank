@@ -3,27 +3,25 @@ server:
 
 clients:
   accounts:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_ACCOUNTS_URI}
   blocker:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_BLOCKER_URI}
   notifications:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_NOTIFICATIONS_URI}
   exchange:
-    uri: ${gateway_service_url}
-
-gateway_service_url: ${COMMON_SERVICE_API_URL}
+    uri: ${CLIENT_EXCHANGE_URI}
 
 spring:
   application:
     name: bank-transfer
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/transfers
+    url: r2dbc:${SPRING_DATASOURCE_URL}
     username: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
   jpa:
     show-sql: true
   liquibase:
-    url: jdbc:postgresql://localhost:5432/transfers
+    url: jdbc:${SPRING_DATASOURCE_URL}
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     change-log: classpath:/db/changelog/db.changelog-master.yml
@@ -31,4 +29,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bank-realm
+          issuer-uri: ${KEYCLOAK_BANK_REALM_URI}

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bank-cash.fullname" . }}-config
+  labels:
+    {{- include "bank-cash.labels" . | nindent 4 }}
+data:
+  KEYCLOAK_ISSUER_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
+  BANK_CASH_CLIENT_SECRET: "F0yxbi4TZB6yFVhPjsY5sO6gNDrXnbqu5rfrtbX1rV8"
+  SPRING_DATASOURCE_URL: {{ tpl (printf "postgresql://%s/cash" .Values.global.uri.database) . | quote }}
+  POSTGRESQL_USER: {{ .Values.global.postgresql.username | quote }}
+  POSTGRESQL_PASSWORD: {{ .Values.global.postgresql.password | quote }}
+  CLIENT_ACCOUNTS_URI: {{ tpl .Values.global.clients.client_account_uri . | quote }}
+  CLIENT_BLOCKER_URI: {{ tpl .Values.global.clients.client_blocker_uri . | quote }}
+  CLIENT_NOTIFICATIONS_URI: {{ tpl .Values.global.clients.client_notifications_uri . | quote }}

@@ -14,7 +14,7 @@ import ru.yandex.practicum.transfer.model.TransactionType;
 import ru.yandex.practicum.transfer.service.TransactionService;
 
 @RestController
-@RequestMapping("/transfer")
+@RequestMapping("/api/transfer")
 @RequiredArgsConstructor
 public class TransferController {
 

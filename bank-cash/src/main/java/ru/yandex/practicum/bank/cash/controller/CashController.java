@@ -12,7 +12,7 @@ import ru.yandex.practicum.bank.cash.model.TransactionType;
 import ru.yandex.practicum.bank.cash.service.impl.TransactionServiceImpl;
 
 @RestController
-@RequestMapping("/cash")
+@RequestMapping("/api/cash")
 public class CashController {
 
     private final TransactionServiceImpl transactionService;

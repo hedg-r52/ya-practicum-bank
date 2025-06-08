@@ -5,7 +5,7 @@ mail:
   username:
   password:
   smtp:
-    host: mailhog
+    host: ${MAILHOG_HOST}
     port: 1025
 
 spring:

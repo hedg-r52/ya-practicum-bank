@@ -5,7 +5,7 @@ global:
     mailhog_http_port: 8025
     keycloak_port: 8080
     accounts_port: 8082
-    cash_port: 8089
+    cash_port: 8099
     transfer_port: 8090
     exchange_generator_port: 8091
     exchange_port: 8093
@@ -14,6 +14,7 @@ global:
   uri:
     keycloak_issuer: "http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/bank-realm"
     database: "{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local"
+    mailhog: "{{ .Release.Name }}-bank-mailhog.{{ .Release.Namespace }}.svc.cluster.local"
   postgresql:
     username: postgres
     password: postgres
@@ -22,6 +23,10 @@ global:
   clients:
     client_account_uri: http://{{ .Release.Name }}-bank-accounts.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.accounts_port }}/api
     client_exchange_uri: http://{{ .Release.Name }}-bank-exchange.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.exchange_port }}/api
+    client_cash_uri: http://{{ .Release.Name }}-bank-cash.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.cash_port }}/api
+    client_transfer_uri: http://{{ .Release.Name }}-bank-transfer.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.transfer_port }}/api
+    client_blocker_uri: http://{{ .Release.Name }}-bank-blocker.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.blocker_port }}/api
+    client_notifications_uri: http://{{ .Release.Name }}-bank-notifications.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.notifications_port }}/api
 
 postgresql:
   image:

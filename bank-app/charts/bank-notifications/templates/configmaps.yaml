@@ -9,3 +9,4 @@ data:
   SPRING_DATASOURCE_URL: {{ tpl (printf "postgresql://%s/notifications" .Values.global.uri.database) . | quote }}
   POSTGRESQL_USER: {{ .Values.global.postgresql.username | quote }}
   POSTGRESQL_PASSWORD: {{ .Values.global.postgresql.password | quote }}
+  MAILHOG_HOST: {{ tpl .Values.global.uri.mailhog . | quote}}

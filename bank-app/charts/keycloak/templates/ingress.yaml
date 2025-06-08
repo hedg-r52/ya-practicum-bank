@@ -6,9 +6,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.ingressClassName}}
   rules:
-    - host: bank-keycloak.local
+    - host: {{ .Values.ingress.hostname }}
       http:
         paths:
           - path: /
@@ -17,5 +17,5 @@ spec:
               service:
                 name: {{ include "keycloak.fullname" . }}
                 port:
-                  number: 8080
+                  number: {{ .Values.global.ports.keycloak_port }}
 {{- end }}

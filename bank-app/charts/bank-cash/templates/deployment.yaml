@@ -1,58 +1,62 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "bank-front-ui.fullname" . }}
+  name: {{ include "bank-cash.fullname" . }}
   labels:
-    {{- include "bank-front-ui.labels" . | nindent 4 }}
+    {{- include "bank-cash.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "bank-front-ui.name" . }}
+      {{- include "bank-cash.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app: bank-front-ui
-        app.kubernetes.io/instance: bank-app
-        app.kubernetes.io/name: bank-front-ui
+        {{- include "bank-cash.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       initContainers:
-        - name: wait-for-keycloak
-          image: curlimages/curl:8.7.1
-          command: [ "sh", "-c" ]
-          args:
-            - |
-              echo "Waiting for Keycloak at http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:8080...";
-              until curl -s -f http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/{{ .Values.global.keycloak.realm }}/.well-known/openid-configuration; do
-                echo "Keycloak not ready. Sleeping...";
-                sleep 5;
-              done
-              echo "Keycloak is ready!";
+        - name: wait-for-postgres
+          image: postgres:17
+          command: [ 'sh', '-c', 'until pg_isready -h {{ .Release.Name }}-postgresql -p 5432; do echo waiting for postgres; sleep 2; done;' ]
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.global.ports.cash_port }}
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: {{ include "bank-front-ui.fullname" . }}-config
+                name: {{ include "bank-cash.fullname" . }}-config
           env:
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
               value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/{{ .Values.global.keycloak.realm }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
               value: http://{{ .Release.Name }}-keycloak.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.keycloak_port }}/realms/{{ .Values.global.keycloak.realm }}/protocol/openid-connect/certs
-            # ЛОГИРОВАНИЕ КЛИЕНТА
-            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_REACTIVE_FUNCTION_CLIENT_EXCHANGEFUNCTIONS
-              value: DEBUG
-            - name: LOGGING_LEVEL_REACTOR_NETTY_HTTP_CLIENT
-              value: DEBUG
-
-            # (опционально: чтобы логгер Spring показывал больше информации)
-            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB
-              value: DEBUG
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

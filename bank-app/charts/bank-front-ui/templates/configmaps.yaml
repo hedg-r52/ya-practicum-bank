@@ -8,4 +8,6 @@ data:
   KEYCLOAK_BANK_REALM_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
   CLIENT_ACCOUNTS_URI: {{ tpl .Values.global.clients.client_account_uri . | quote }}
   CLIENT_EXCHANGE_URI: {{ tpl .Values.global.clients.client_exchange_uri . | quote }}
+  CLIENT_CASH_URI: {{ tpl .Values.global.clients.client_cash_uri . | quote }}
+  CLIENT_TRANSFER_URI: {{ tpl .Values.global.clients.client_transfer_uri . | quote }}
 

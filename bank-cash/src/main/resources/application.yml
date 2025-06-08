@@ -1,31 +1,48 @@
 server:
-  port: 8089
+  port: 8099
 spring:
   application:
     name: bank-cash
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/cash
+    url: r2dbc:${SPRING_DATASOURCE_URL}
     username: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
   jpa:
     show-sql: true
   liquibase:
-    url: jdbc:postgresql://localhost:5432/cash
+    url: jdbc:${SPRING_DATASOURCE_URL}
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     change-log: classpath:/db/changelog/db.changelog-master.yml
   security:
     oauth2:
+      client:
+        registration:
+          bank-cash-client:
+            client-id: cash
+            client-secret: ${BANK_CASH_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            provider: keycloak
+        provider:
+          keycloak:
+            token-uri: ${KEYCLOAK_ISSUER_URI}/protocol/openid-connect/token
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bank-realm
-
-gateway_service_url: ${COMMON_SERVICE_API_URL}
+          issuer-uri: ${KEYCLOAK_BANK_REALM_URI}
 
 clients:
   accounts:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_ACCOUNTS_URI}
   blocker:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_BLOCKER_URI}
   notifications:
-    uri: ${gateway_service_url}
+    uri: ${CLIENT_NOTIFICATIONS_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

@@ -28,6 +28,9 @@ dependencies:
   - name: bank-notifications
     version: 0.1.0
     repository: file://charts/bank-notifications
+  - name: bank-cash
+    version: 0.1.0
+    repository: file://charts/bank-cash
   - name: bank-mailhog
     version: 0.1.0
     repository: file://charts/bank-mailhog
