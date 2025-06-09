@@ -37,7 +37,7 @@ public class SecurityConfig {
         return http
                 .authorizeExchange(auth -> auth
                         .pathMatchers("/actuator/**").permitAll()
-                        .pathMatchers("/signup", "/css/**", "/js/**").permitAll()
+                        .pathMatchers("/signup", "/css/**", "/js/**", "/login").permitAll()
                         .anyExchange().authenticated()
                 )
                 .formLogin(formLogin -> formLogin

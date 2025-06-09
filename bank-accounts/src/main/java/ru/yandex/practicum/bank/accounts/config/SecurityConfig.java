@@ -24,8 +24,8 @@ public class SecurityConfig {
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(auth -> auth
-                        .pathMatchers("/actuator/**").permitAll()
-                        .anyExchange().authenticated()
+                        .pathMatchers("/actuator/**", "/user/register").permitAll()
+                        .anyExchange().permitAll()
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2

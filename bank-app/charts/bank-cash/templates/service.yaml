@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bank-cash.fullname" . }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.global.ports.cash_port }}
+      targetPort: {{ .Values.global.ports.cash_port }}
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "bank-cash.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

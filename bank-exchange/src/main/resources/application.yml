@@ -4,19 +4,14 @@ server:
 spring:
   application:
     name: bank-exchange
-  cloud:
-    config:
-      uri: http://localhost:8888
-  config:
-    import: optional:configserver:http://localhost:8888
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/exchange_rates
+    url: r2dbc:${SPRING_DATASOURCE_URL}
     username: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
   jpa:
     show-sql: true
   liquibase:
-    url: jdbc:postgresql://localhost:5432/exchange_rates
+    url: jdbc:${SPRING_DATASOURCE_URL}
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     change-log: classpath:/db/changelog/db.changelog-master.yml
@@ -24,9 +19,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bank-realm
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

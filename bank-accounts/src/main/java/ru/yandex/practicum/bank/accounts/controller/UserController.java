@@ -15,7 +15,7 @@ import ru.yandex.practicum.bank.accounts.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;

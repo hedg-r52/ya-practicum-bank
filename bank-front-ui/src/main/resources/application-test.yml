@@ -1,0 +1,35 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: bank-front-ui
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: bank-front-ui
+            client-secret: QZ7KzL1OpXEy5c7Nc3hG9JQp6XLsEaEXzRUu7LkoGd3RyzHhYvA5byzH5JqDjU8L
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid, profile
+            provider: keycloak
+
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/bank-realm/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
+
+clients:
+  accounts:
+    uri: ${CLIENT_ACCOUNTS_URI}
+  exchange:
+    uri: ${CLIENT_EXCHANGE_URI}
+  cash:
+    uri: ${CLIENT_CASH_URI}
+  transfer:
+    uri: ${CLIENT_TRANSFER_URI}

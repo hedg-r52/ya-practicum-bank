@@ -2,17 +2,15 @@ server:
   port: 8082
 
 spring:
-  config:
-    import: optional:configserver:http://localhost:8888
   application:
     name: bank-accounts
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bank-realm
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/accounts
+    url: r2dbc:${SPRING_DATASOURCE_URL}
     username: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     pool:
@@ -23,26 +21,13 @@ spring:
       max-life-time: 10m
       validation-query: SELECT 1
   datasource:
-    url: jdbc:postgresql://localhost:5432/accounts
+    url: jdbc:${SPRING_DATASOURCE_URL}
   jpa:
     show-sql: true
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yml
     default-schema: public
-    url: jdbc:postgresql://localhost:5432/accounts
+    url: jdbc:${SPRING_DATASOURCE_URL}
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     enabled: true
-
-logging:
-  level:
-    root: INFO
-    ru.yandex.practicum.bank.accounts: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.web.reactive: DEBUG
-    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka

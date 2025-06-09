@@ -1,0 +1,11 @@
+server:
+  port: 8097
+
+spring:
+  application:
+    name: bank-blocker
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bank-realm

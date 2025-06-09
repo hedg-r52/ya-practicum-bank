@@ -3,23 +3,13 @@ server:
 
 clients:
   exchange:
-    uri: ${gateway_service_url}
-
-gateway_service_url: http://localhost:8081/api
+    uri: ${CLIENT_EXCHANGE_URI}
 
 spring:
   application:
     name: bank-exchange-generator
-  cloud:
-    config:
-      uri: http://localhost:8888
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/bank-realm
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
