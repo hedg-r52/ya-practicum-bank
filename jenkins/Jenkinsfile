@@ -14,7 +14,7 @@ pipeline {
         stage('Build & Unit Tests') {
             steps {
                 sh 'chmod +x ./gradlew'
-                sh './gradlew clean test -p exchange'
+                sh './gradlew clean test -p bank-exchange'
             }
         }
 
