@@ -92,7 +92,6 @@ pipeline {
                                              --set bank-front-ui.ingress.hosts[0].paths[0].pathType="Prefix"
                         """
                     }
-                } }
         }
 
         stage('Manual Approval for PROD') {
@@ -100,7 +99,6 @@ pipeline {
                 input message: 'Deploy to PROD environment?', ok: 'Yes, deploy'
             }
         }
-
 
         stage('Helm Deploy to PROD') {
             steps {
