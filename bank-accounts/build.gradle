@@ -21,3 +21,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+jar {
+    archiveFileName = "bank-accounts.jar"
+}

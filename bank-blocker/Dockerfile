@@ -1,10 +1,5 @@
-FROM eclipse-temurin:21-jdk AS builder
-WORKDIR /app
-COPY . .
-RUN sed -i 's/\r$//' gradlew
-RUN ./gradlew :bank-blocker:bootJar --no-daemon
-
 FROM eclipse-temurin:21-jre
-WORKDIR /app
-COPY --from=builder /app/bank-blocker/build/libs/*.jar app.jar
+
+COPY ./build/libs/bank-blocker.jar app.jar
+
 ENTRYPOINT ["java", "-jar", "app.jar"]

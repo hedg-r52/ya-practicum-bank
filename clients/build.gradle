@@ -14,3 +14,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }
+
+tasks.withType(JavaCompile).configureEach {
+    enabled = false
+}
+
+tasks.withType(Jar).configureEach {
+    enabled = false
+}
