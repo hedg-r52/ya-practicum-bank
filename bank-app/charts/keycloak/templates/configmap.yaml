@@ -5,5 +5,5 @@ metadata:
   name: {{ include "keycloak.fullname" . }}-realm
 data:
   realm.json: |-
-{{ .Files.Get .Values.realmConfig.realmFile | indent 4 }}
+{{ .Files.Get .Values.realmConfig.realmFile | indent 2 }}
 {{- end }}
