@@ -12,7 +12,9 @@ java {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
+    if (project.name != 'clients') {
+        apply plugin: 'org.springframework.boot'
+    }
     apply plugin: 'io.spring.dependency-management'
 
     group = 'ru.yandex.practicum.bank'
