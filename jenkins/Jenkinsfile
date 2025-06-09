@@ -52,6 +52,12 @@ pipeline {
             }
         }
 
+        stage('Helm Dependency Build') {
+			steps {
+				sh 'helm dependency build bank-app/'
+            }
+        }
+
         stage('Helm Deploy to TEST') {
 			steps {
 					sh """
