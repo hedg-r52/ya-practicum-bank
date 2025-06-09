@@ -27,6 +27,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-jar {
+bootJar {
     archiveFileName = "bank-notifications.jar"
 }
