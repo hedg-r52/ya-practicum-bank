@@ -1,6 +1,7 @@
 FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 COPY . .
+RUN sed -i 's/\r$//' gradlew
 RUN ./gradlew :bank-exchange-generator:bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre

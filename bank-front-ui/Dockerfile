@@ -1,6 +1,7 @@
 FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
 COPY . .
+RUN sed -i 's/\r$//' gradlew
 RUN ./gradlew :bank-front-ui:bootJar
 
 FROM eclipse-temurin:21-jre-jammy
