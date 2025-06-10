@@ -15,7 +15,7 @@ pipeline {
 			steps {
 				sh 'chmod +x ./gradlew'
                 sh './gradlew clean test -p bank-exchange'
-                sh './gradlew clean bootJar'
+                sh './gradlew clean build'
             }
         }
 
