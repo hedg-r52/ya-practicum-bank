@@ -98,7 +98,7 @@ pipeline {
 					    --set bank-exchange-generator.image.tag=${IMAGE_TAG} \\
 					    --set bank-front-ui.image.repository=${DOCKER_REGISTRY}/bank-front-ui \\
 					    --set bank-front-ui.image.tag=${IMAGE_TAG} \\
-					    --set bank-front-ui.ingress.hosts[0].host=bank-app.local \\
+					    --set bank-front-ui.ingress.hosts[0].host=bank-app.test.local \\
 					    --set bank-front-ui.ingress.hosts[0].paths[0].path="/" \\
 					    --set bank-front-ui.ingress.hosts[0].paths[0].pathType="Prefix" \\
 					    --set bank-keycloak.enabled=true \\
@@ -108,13 +108,13 @@ pipeline {
 					    --set bank-keycloak.auth.adminPassword=admin \\
 					    --set bank-keycloak.service.type=ClusterIP \\
 					    --set bank-keycloak.ingress.enabled=true \\
-					    --set bank-keycloak.ingress.hostname=bank-keycloak.local \\
+					    --set bank-keycloak.ingress.hostname=bank-keycloak.test.local \\
 					    --set bank-mailhog.enabled=true \\
 					    --set bank-mailhog.image.repository=mailhog/mailhog \\
 					    --set bank-mailhog.image.tag=latest \\
 					    --set bank-mailhog.service.type=ClusterIP \\
 					    --set bank-mailhog.ingress.enabled=true \\
-					    --set bank-mailhog.ingress.hostname=bank-mailhog.local
+					    --set bank-mailhog.ingress.hostname=bank-mailhog.test.local
             		"""
                     }
         }
