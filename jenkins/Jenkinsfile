@@ -19,6 +19,15 @@ pipeline {
             }
         }
 
+        stage('Check files (for debug)') {
+			steps {
+				sh """
+				pwd
+				ls -lh ./
+				"""
+			}
+		}
+
         stage('Build Docker Images') {
 			steps {
 				sh """
@@ -121,7 +130,6 @@ pipeline {
 				    --set postgresql.auth.username=${DB_USER} \\
 				    --set postgresql.auth.database=${DB_NAME} \\
 				    --set postgresql.image.tag=17 \\
-				    --set postgresql.primary.initdb.scripts.init-multiple-dbs.sql='CREATE DATABASE accounts; CREATE DATABASE notifications; CREATE DATABASE cash; CREATE DATABASE exchange_rates; CREATE DATABASE transfers;' \\
 				    --set postgresql.persistence.enabled=true \\
 				    --set postgresql.persistence.size=500Mi \\
 				    --set bank-accounts.image.repository=${DOCKER_REGISTRY}/bank-accounts \\
