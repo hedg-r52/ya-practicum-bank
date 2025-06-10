@@ -25,6 +25,6 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
 }
 
-bootJar {
+jar {
     archiveFileName = "bank-exchange.jar"
 }

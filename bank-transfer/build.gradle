@@ -28,6 +28,6 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
 }
 
-bootJar {
+jar {
     archiveFileName = "bank-transfer.jar"
 }

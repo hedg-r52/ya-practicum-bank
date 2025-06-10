@@ -26,6 +26,6 @@ test {
     useJUnitPlatform()
 }
 
-bootJar {
+jar {
     archiveFileName = "bank-blocker.jar"
 }
