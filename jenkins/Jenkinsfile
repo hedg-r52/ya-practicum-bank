@@ -63,7 +63,11 @@ pipeline {
 
         stage('Helm Dependency Build') {
 			steps {
-				sh 'helm dependency build bank-app/'
+				sh """
+				helm repo add bitnami https://charts.bitnami.com/bitnami
+            	helm repo update
+				helm dependency build bank-app/
+				"""
             }
         }
 
