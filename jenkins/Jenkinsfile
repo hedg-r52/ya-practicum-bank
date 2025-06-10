@@ -129,7 +129,7 @@ pipeline {
 			steps {
 				sh """
 				helm upgrade --install bank-app bank-app/. \\
-				    --namespace prod --create-namespace \\
+				    --create-namespace \\
 				    --set postgresql.auth.password=${DB_PASSWORD} \\
 				    --set postgresql.auth.username=${DB_USER} \\
 				    --set postgresql.auth.database=${DB_NAME} \\
