@@ -17,3 +17,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
 }
+
+bootJar {
+    archiveFileName = "bank-exchange-generator.jar"
+}

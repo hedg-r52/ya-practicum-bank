@@ -4,5 +4,6 @@ kind: ConfigMap
 metadata:
   name: {{ include "keycloak.fullname" . }}-realm
 data:
-  realm.json: {{ .Files.Get .Values.realmConfig.realmFile | quote }}
+  realm.json: |-
+{{ (.Files.Get .Values.realmConfig.realmFile) | indent 4 }}
 {{- end }}

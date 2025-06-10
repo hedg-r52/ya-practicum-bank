@@ -1,25 +1,36 @@
 pipeline {
-    agent any
+	agent any
 
     environment {
-        DOCKER_REGISTRY = credentials('DOCKER_REGISTRY')
-        DB_PASSWORD     = credentials('DB_PASSWORD')
+		DOCKER_REGISTRY = credentials('DOCKER_REGISTRY')
+        DB_PASSWORD = credentials('DB_PASSWORD')
         GITHUB_USERNAME = credentials('GITHUB_USERNAME')
-        DB_NAME         = 'postgres'
-        DB_USER         = 'postgres'
-        IMAGE_TAG       = "${env.BUILD_NUMBER}"
+        DB_NAME = 'postgres'
+        DB_USER = 'postgres'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
-        stage('Build & Unit Tests') {
-            steps {
-                sh './gradlew clean test -p exchange'
+		stage('Build & Unit Tests') {
+			steps {
+				sh 'chmod +x ./gradlew'
+                sh './gradlew clean test -p bank-exchange'
+                sh './gradlew clean build'
             }
         }
 
+        stage('Check files (for debug)') {
+			steps {
+				sh """
+				pwd
+				ls -lh ./
+				"""
+			}
+		}
+
         stage('Build Docker Images') {
-            steps {
-                sh """
+			steps {
+				sh """
                 docker build -t ${DOCKER_REGISTRY}/bank-accounts:${IMAGE_TAG} bank-accounts
                 docker build -t ${DOCKER_REGISTRY}/bank-blocker:${IMAGE_TAG} bank-blocker
                 docker build -t ${DOCKER_REGISTRY}/bank-cash:${IMAGE_TAG} bank-cash
@@ -33,9 +44,9 @@ pipeline {
         }
 
         stage('Push Docker Images') {
-            steps {
-                withCredentials([string(credentialsId: 'GHCR_TOKEN', variable: 'GHCR_TOKEN')]) {
-                    sh """
+			steps {
+				withCredentials([string(credentialsId: 'GHCR_TOKEN', variable: 'GHCR_TOKEN')]) {
+					sh """
                     echo \$GHCR_TOKEN | docker login ghcr.io -u ${GITHUB_USERNAME} --password-stdin
                     docker push ${DOCKER_REGISTRY}/bank-accounts:${IMAGE_TAG}
                     docker push ${DOCKER_REGISTRY}/bank-blocker:${IMAGE_TAG}
@@ -50,84 +61,115 @@ pipeline {
             }
         }
 
-        stage('Install PostgreSQL to TEST') {
-            steps {
-                sh """
-                helm repo add bitnami https://charts.bitnami.com/bitnami
-                helm repo update
-
-                helm upgrade --install postgres bitnami/postgresql \\
-                  --namespace test --create-namespace \\
-                  --set auth.database=${DB_NAME} \\
-                  --set auth.username=${DB_USER} \\
-                  --set auth.password=${DB_PASSWORD}
-                """
+        stage('Helm Dependency Build') {
+			steps {
+				sh """
+				helm repo add bitnami https://charts.bitnami.com/bitnami
+            	helm repo update
+				helm dependency build bank-app/
+				"""
             }
         }
 
         stage('Helm Deploy to TEST') {
-                    steps {
-                        sh """
-                        helm upgrade --install bank-app bank-app/. \\
-                                             --namespace test --create-namespace \\
-                                             --set postgresql.auth.password=${DB_PASSWORD} \\
-                        					 --set bank-accounts.image.repository=${DOCKER_REGISTRY}/bank-accounts \\
-                        					 --set bank-accounts.image.tag=${IMAGE_TAG} \\
-                        					 --set bank-blocker.image.repository=${DOCKER_REGISTRY}/bank-blocker \\
-                        					 --set bank-blocker.image.tag=${IMAGE_TAG} \\
-                        					 --set bank-cash.image.repository=${DOCKER_REGISTRY}/bank-cash \\
-                        					 --set bank-cash.image.tag=${IMAGE_TAG} \\
-                        					 --set bank-exchange.image.repository=${DOCKER_REGISTRY}/bank-exchange \\
-                        					 --set bank-exchange.image.tag=${IMAGE_TAG} \\
-                        					 --set bank-notifications.image.repository=${DOCKER_REGISTRY}/bank-notifications \\
-                        					 --set bank-notifications.image.tag=${IMAGE_TAG} \\
-                                             --set bank-transfer.image.repository=${DOCKER_REGISTRY}/bank-transfer \\
-                                             --set bank-transfer.image.tag=${IMAGE_TAG} \\
-                        					 --set bank-exchange-generator.image.repository=${DOCKER_REGISTRY}/bank-exchange-generator \\
-                        					 --set bank-exchange-generator.image.tag=${IMAGE_TAG} \\
-                        					 --set bank-front-ui.image.repository=${DOCKER_REGISTRY}/bank-front-ui \\
-                        					 --set bank-front-ui.image.tag=${IMAGE_TAG} \\
-                        					 --set bank-front-ui.ingress.hosts[0].host=bank-app-test.local \\
-                        					 --set bank-front-ui.ingress.hosts[0].paths[0].path="/" \\
-                                             --set bank-front-ui.ingress.hosts[0].paths[0].pathType="Prefix"
-                        """
+			steps {
+					sh """
+					helm upgrade --install bank-app bank-app/. \\
+					    --namespace test --create-namespace \\
+					    --set postgresql.auth.password=${DB_PASSWORD} \\
+					    --set postgresql.auth.username=${DB_USER} \\
+					    --set postgresql.auth.database=${DB_NAME} \\
+					    --set postgresql.image.tag=17 \\
+					    --set postgresql.persistence.enabled=true \\
+					    --set postgresql.persistence.size=500Mi \\
+					    --set bank-accounts.image.repository=${DOCKER_REGISTRY}/bank-accounts \\
+					    --set bank-accounts.image.tag=${IMAGE_TAG} \\
+					    --set bank-blocker.image.repository=${DOCKER_REGISTRY}/bank-blocker \\
+					    --set bank-blocker.image.tag=${IMAGE_TAG} \\
+					    --set bank-cash.image.repository=${DOCKER_REGISTRY}/bank-cash \\
+					    --set bank-cash.image.tag=${IMAGE_TAG} \\
+					    --set bank-exchange.image.repository=${DOCKER_REGISTRY}/bank-exchange \\
+					    --set bank-exchange.image.tag=${IMAGE_TAG} \\
+					    --set bank-notifications.image.repository=${DOCKER_REGISTRY}/bank-notifications \\
+					    --set bank-notifications.image.tag=${IMAGE_TAG} \\
+					    --set bank-transfer.image.repository=${DOCKER_REGISTRY}/bank-transfer \\
+					    --set bank-transfer.image.tag=${IMAGE_TAG} \\
+					    --set bank-exchange-generator.image.repository=${DOCKER_REGISTRY}/bank-exchange-generator \\
+					    --set bank-exchange-generator.image.tag=${IMAGE_TAG} \\
+					    --set bank-front-ui.image.repository=${DOCKER_REGISTRY}/bank-front-ui \\
+					    --set bank-front-ui.image.tag=${IMAGE_TAG} \\
+					    --set bank-front-ui.ingress.hosts[0].host=bank-app.test.local \\
+					    --set bank-front-ui.ingress.hosts[0].paths[0].path="/" \\
+					    --set bank-front-ui.ingress.hosts[0].paths[0].pathType="Prefix" \\
+					    --set bank-keycloak.enabled=true \\
+					    --set bank-keycloak.image.repository=bitnami/keycloak \\
+					    --set bank-keycloak.image.tag=24.0.2 \\
+					    --set bank-keycloak.auth.adminUser=admin \\
+					    --set bank-keycloak.auth.adminPassword=admin \\
+					    --set bank-keycloak.service.type=ClusterIP \\
+					    --set bank-keycloak.ingress.enabled=true \\
+					    --set bank-keycloak.ingress.hostname=bank-keycloak.test.local \\
+					    --set bank-mailhog.enabled=true \\
+					    --set bank-mailhog.image.repository=mailhog/mailhog \\
+					    --set bank-mailhog.image.tag=latest \\
+					    --set bank-mailhog.service.type=ClusterIP \\
+					    --set bank-mailhog.ingress.enabled=true \\
+					    --set bank-mailhog.ingress.hostname=bank-mailhog.test.local
+            		"""
                     }
-                } }
         }
 
         stage('Manual Approval for PROD') {
-            steps {
-                input message: 'Deploy to PROD environment?', ok: 'Yes, deploy'
+			steps {
+				input message: 'Deploy to PROD environment?', ok: 'Yes, deploy'
             }
         }
 
-
         stage('Helm Deploy to PROD') {
-            steps {
-                sh """
-                helm upgrade --install bank-app bank-app/. \\
-                                     --namespace prod --create-namespace \\
-                                     --set postgresql.auth.password=${DB_PASSWORD} \\
-                					 --set bank-accounts.image.repository=${DOCKER_REGISTRY}/bank-accounts \\
-                					 --set bank-accounts.image.tag=${IMAGE_TAG} \\
-                					 --set bank-blocker.image.repository=${DOCKER_REGISTRY}/bank-blocker \\
-                					 --set bank-blocker.image.tag=${IMAGE_TAG} \\
-                					 --set bank-cash.image.repository=${DOCKER_REGISTRY}/bank-cash \\
-                					 --set bank-cash.image.tag=${IMAGE_TAG} \\
-                					 --set bank-exchange.image.repository=${DOCKER_REGISTRY}/bank-exchange \\
-                					 --set bank-exchange.image.tag=${IMAGE_TAG} \\
-                					 --set bank-notifications.image.repository=${DOCKER_REGISTRY}/bank-notifications \\
-                					 --set bank-notifications.image.tag=${IMAGE_TAG} \\
-                                     --set bank-transfer.image.repository=${DOCKER_REGISTRY}/bank-transfer \\
-                                     --set bank-transfer.image.tag=${IMAGE_TAG} \\
-                					 --set bank-exchange-generator.image.repository=${DOCKER_REGISTRY}/bank-exchange-generator \\
-                					 --set bank-exchange-generator.image.tag=${IMAGE_TAG} \\
-                					 --set bank-front-ui.image.repository=${DOCKER_REGISTRY}/bank-front-ui \\
-                					 --set bank-front-ui.image.tag=${IMAGE_TAG} \\
-                					 --set bank-front-ui.ingress.hosts[0].host=bank-app.local \\
-                					 --set bank-front-ui.ingress.hosts[0].paths[0].path="/" \\
-                                     --set bank-front-ui.ingress.hosts[0].paths[0].pathType="Prefix"
-                """
+			steps {
+				sh """
+				helm upgrade --install bank-app bank-app/. \\
+				    --create-namespace \\
+				    --set postgresql.auth.password=${DB_PASSWORD} \\
+				    --set postgresql.auth.username=${DB_USER} \\
+				    --set postgresql.auth.database=${DB_NAME} \\
+				    --set postgresql.image.tag=17 \\
+				    --set postgresql.persistence.enabled=true \\
+				    --set postgresql.persistence.size=500Mi \\
+				    --set bank-accounts.image.repository=${DOCKER_REGISTRY}/bank-accounts \\
+				    --set bank-accounts.image.tag=${IMAGE_TAG} \\
+				    --set bank-blocker.image.repository=${DOCKER_REGISTRY}/bank-blocker \\
+				    --set bank-blocker.image.tag=${IMAGE_TAG} \\
+				    --set bank-cash.image.repository=${DOCKER_REGISTRY}/bank-cash \\
+				    --set bank-cash.image.tag=${IMAGE_TAG} \\
+				    --set bank-exchange.image.repository=${DOCKER_REGISTRY}/bank-exchange \\
+				    --set bank-exchange.image.tag=${IMAGE_TAG} \\
+				    --set bank-notifications.image.repository=${DOCKER_REGISTRY}/bank-notifications \\
+				    --set bank-notifications.image.tag=${IMAGE_TAG} \\
+				    --set bank-transfer.image.repository=${DOCKER_REGISTRY}/bank-transfer \\
+				    --set bank-transfer.image.tag=${IMAGE_TAG} \\
+				    --set bank-exchange-generator.image.repository=${DOCKER_REGISTRY}/bank-exchange-generator \\
+				    --set bank-exchange-generator.image.tag=${IMAGE_TAG} \\
+				    --set bank-front-ui.image.repository=${DOCKER_REGISTRY}/bank-front-ui \\
+				    --set bank-front-ui.image.tag=${IMAGE_TAG} \\
+				    --set bank-front-ui.ingress.hosts[0].host=bank-app.local \\
+				    --set bank-front-ui.ingress.hosts[0].paths[0].path="/" \\
+				    --set bank-front-ui.ingress.hosts[0].paths[0].pathType="Prefix" \\
+				    --set bank-keycloak.enabled=true \\
+				    --set bank-keycloak.image.repository=bitnami/keycloak \\
+				    --set bank-keycloak.image.tag=24.0.2 \\
+				    --set bank-keycloak.auth.adminUser=admin \\
+				    --set bank-keycloak.auth.adminPassword=admin \\
+				    --set bank-keycloak.service.type=ClusterIP \\
+				    --set bank-keycloak.ingress.enabled=true \\
+				    --set bank-keycloak.ingress.hostname=bank-keycloak.local \\
+				    --set bank-mailhog.enabled=true \\
+				    --set bank-mailhog.image.repository=mailhog/mailhog \\
+				    --set bank-mailhog.image.tag=latest \\
+				    --set bank-mailhog.service.type=ClusterIP \\
+				    --set bank-mailhog.ingress.enabled=true \\
+				    --set bank-mailhog.ingress.hostname=bank-mailhog.local
+            	"""
             }
         }
     }

@@ -1,10 +1,5 @@
-FROM eclipse-temurin:21-jdk-jammy AS builder
-WORKDIR /app
-COPY . .
-RUN ./gradlew :bank-front-ui:bootJar
+FROM eclipse-temurin:21-jre
 
-FROM eclipse-temurin:21-jre-jammy
-WORKDIR /app
-COPY --from=builder /app/bank-front-ui/build/libs/*.jar app.jar
-EXPOSE 8083
+COPY ./build/libs/bank-front-ui.jar app.jar
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
