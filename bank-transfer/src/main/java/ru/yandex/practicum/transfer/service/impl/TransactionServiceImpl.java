@@ -69,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService {
                         }))
                 .map(transactionMapper::map)
                 .onErrorResume(e -> {
-                    log.error("Something Went Wrong");
+                    log.error("Something Went Wrong", e);
                     return Mono.empty();
                 });
     }
@@ -85,6 +85,7 @@ public class TransactionServiceImpl implements TransactionService {
                             if (e instanceof MoneyException) {
                                 transaction.setStatus(TransactionStatus.NOT_ENOUGH_MONEY);
                             } else {
+                                log.error("Error Debug: ", e);
                                 transaction.setStatus(TransactionStatus.FAILED);
                             }
 

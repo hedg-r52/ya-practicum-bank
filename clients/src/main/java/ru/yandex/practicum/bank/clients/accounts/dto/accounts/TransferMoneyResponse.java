@@ -1,9 +1,8 @@
 package ru.yandex.practicum.bank.clients.accounts.dto.accounts;
 
-import lombok.Builder;
-
-@Builder
 public class TransferMoneyResponse {
+    public TransferMoneyResponse() {}
+
     private boolean completed;
 
     public boolean isCompleted() {

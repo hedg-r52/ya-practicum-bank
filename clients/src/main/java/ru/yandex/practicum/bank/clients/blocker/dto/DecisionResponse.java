@@ -1,10 +1,11 @@
 package ru.yandex.practicum.bank.clients.blocker.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 
-@Builder
 public class DecisionResponse {
+
+    public DecisionResponse() {}
+
     @JsonProperty("isBlocked")
     private boolean isBlocked;
 
