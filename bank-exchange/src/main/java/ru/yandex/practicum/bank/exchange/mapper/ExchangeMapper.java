@@ -4,9 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import ru.yandex.practicum.bank.exchange.dto.ExchangeRateRequestDto;
 import ru.yandex.practicum.bank.exchange.dto.ExchangeRateResponseDto;
+import ru.yandex.practicum.bank.exchange.dto.ExchangeRateUpdateRequest;
 import ru.yandex.practicum.bank.exchange.model.ExchangeRate;
+import ru.yandex.practicum.bank.messaging.exchange.ExchangeRateUpdateMessageItem;
 
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -16,5 +17,6 @@ import ru.yandex.practicum.bank.exchange.model.ExchangeRate;
 public interface ExchangeMapper {
     ExchangeRateResponseDto map(ExchangeRate exchangeRate);
 
-    ExchangeRate map(ExchangeRateRequestDto request);
+    ExchangeRate map(ExchangeRateUpdateRequest request);
+    ExchangeRate map(ExchangeRateUpdateMessageItem request);
 }

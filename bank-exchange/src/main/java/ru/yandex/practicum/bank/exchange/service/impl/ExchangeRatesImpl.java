@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.yandex.practicum.bank.exchange.dto.ExchangeRateRequestDto;
 import ru.yandex.practicum.bank.exchange.dto.ExchangeRateResponseDto;
 import ru.yandex.practicum.bank.exchange.mapper.ExchangeMapper;
 import ru.yandex.practicum.bank.exchange.model.Currency;
 import ru.yandex.practicum.bank.exchange.model.ExchangeRate;
 import ru.yandex.practicum.bank.exchange.repository.ExchangeRepository;
 import ru.yandex.practicum.bank.exchange.service.ExchangeService;
+import ru.yandex.practicum.bank.messaging.exchange.ExchangeRateUpdateMessage;
+import ru.yandex.practicum.bank.messaging.exchange.ExchangeRateUpdateMessageItem;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class ExchangeRatesImpl implements ExchangeService {
     }
 
     @Override
-    public Flux<ExchangeRateResponseDto> save(List<ExchangeRateRequestDto> exchangeRates) {
+    public Flux<ExchangeRateResponseDto> save(List<ExchangeRateUpdateMessageItem> exchangeRates) {
         return Flux.fromIterable(exchangeRates)
                 .map(exchangeMapper::map)
                 .collectList()

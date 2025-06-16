@@ -1,34 +1,46 @@
-package ru.yandex.practicum.bank.exchange.generator.service.impl;
+package ru.yandex.practicum.bank.exchange.generator.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.clients.exchange.ExchangeClient;
 import ru.yandex.practicum.bank.clients.exchange.dto.ExchangeRateResponse;
+import ru.yandex.practicum.bank.exchange.generator.dto.ExchangeRateUpdateRequest;
 import ru.yandex.practicum.bank.exchange.generator.mapper.ExchangeMapper;
 import ru.yandex.practicum.bank.exchange.generator.model.Currency;
 import ru.yandex.practicum.bank.exchange.generator.model.ExchangeRate;
-import ru.yandex.practicum.bank.exchange.generator.service.ExchangeGeneratorService;
+import ru.yandex.practicum.bank.messaging.exchange.ExchangeRateUpdateMessage;
+import ru.yandex.practicum.bank.messaging.exchange.ExchangeRateUpdateMessageItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ExchangeGeneratorServiceImpl implements ExchangeGeneratorService {
+public class ProduceMessageScheduler {
 
+    private final KafkaTemplate<String, ExchangeRateUpdateMessage> kafkaTemplate;
     private final ExchangeMapper exchangeMapper;
-    private final ExchangeClient exchangeClient;
 
     @Scheduled(fixedDelay = 1000)
-    @Override
-    public Flux<ExchangeRateResponse> updateRates() {
+    public Mono<Void> updateRates() {
         return generateRates()
                 .flatMapMany(Flux::fromIterable)
-                .map(exchangeMapper::map)
                 .collectList()
-                .flatMapMany(exchangeClient::update);
+                .doOnNext(exchangeRates -> {
+                    var rates = new ExchangeRateUpdateMessage();
+                    List<ExchangeRateUpdateMessageItem> items = new ArrayList<>();
+                    exchangeRates.forEach(rate -> items.add(new ExchangeRateUpdateMessageItem(
+                            rate.getCurrency().toString(),
+                            rate.getRate()
+                    )));
+                    rates.setRates(items);
+                    kafkaTemplate.send("rates", rates);
+                })
+                .then();
     }
 
     private Mono<List<ExchangeRate>> generateRates() {

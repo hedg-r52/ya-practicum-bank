@@ -11,7 +11,7 @@ dependencies:
     version: 15.2.5
     repository: https://charts.bitnami.com/bitnami
   - name: kafka
-    version: 32.2.9
+    version: 32.2.15
     repository: https://charts.bitnami.com/bitnami
   - name: bank-accounts
     version: 0.1.0
