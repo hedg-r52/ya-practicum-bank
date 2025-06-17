@@ -37,6 +37,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Mono<UserResponseDto> findById(Long userId) {
+        return userRepository.findById(userId)
+                .switchIfEmpty(Mono.error(new UserNotFoundException()))
+                .map(userMapper::map);
+    }
+
+    @Override
     public Mono<UserResponseDto> findByAccountId(Long accountId) {
         return userRepository.findByAccountId(accountId)
                 .switchIfEmpty(Mono.error(new UserNotFoundException()))

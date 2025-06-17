@@ -95,7 +95,9 @@ kafka:
       - name: rates
         partitions: 1
         replicationFactor: 1
-
+      - name: notifications
+        partitions: 1
+        replicationFactor: 1
 
 ingress:
   enabled: true
@@ -106,6 +108,11 @@ ingress:
       paths:
         - path: /api(/|$)(.*)
           pathType: Prefix
+
+bank-mailhog:
+  ingress:
+    enabled: true
+    hostname: bank-mailhog.local
 
 bank-accounts:
   image:
