@@ -115,7 +115,6 @@ pipeline {
 					    --set bank-mailhog.service.type=ClusterIP \\
 					    --set bank-mailhog.ingress.enabled=true \\
 					    --set bank-mailhog.ingress.hostname=bank-mailhog.test.local \\
-					    --set kafka.controller.config.clusterId=dLP6xtOGNqLEZLB1E4v7EL \\
 					    --set kafka.auth.enabled=false
             		"""
                     }
@@ -171,7 +170,6 @@ pipeline {
 				    --set bank-mailhog.service.type=ClusterIP \\
 				    --set bank-mailhog.ingress.enabled=true \\
 				    --set bank-mailhog.ingress.hostname=bank-mailhog.local \\
-					--set kafka.controller.config.clusterId=dLP6xtOGNqLEZLB1E4v7EL \\
 					--set kafka.auth.enabled=false
             	"""
             }
