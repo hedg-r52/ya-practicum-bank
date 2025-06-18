@@ -114,7 +114,7 @@ pipeline {
 					    --set bank-mailhog.image.tag=latest \\
 					    --set bank-mailhog.service.type=ClusterIP \\
 					    --set bank-mailhog.ingress.enabled=true \\
-					    --set bank-mailhog.ingress.hostname=bank-mailhog.test.local \\
+					    --set bank-mailhog.ingress.hosts[0].host=bank-mailhog.test.local \\
 					    --set kafka.auth.enabled=false
             		"""
                     }
@@ -169,7 +169,7 @@ pipeline {
 				    --set bank-mailhog.image.tag=latest \\
 				    --set bank-mailhog.service.type=ClusterIP \\
 				    --set bank-mailhog.ingress.enabled=true \\
-				    --set bank-mailhog.ingress.hostname=bank-mailhog.local \\
+				    --set bank-mailhog.ingress.hosts[0].host=bank-mailhog.local \\
 					--set kafka.auth.enabled=false
             	"""
             }
