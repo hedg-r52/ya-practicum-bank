@@ -109,11 +109,6 @@ ingress:
         - path: /api(/|$)(.*)
           pathType: Prefix
 
-bank-mailhog:
-  ingress:
-    enabled: true
-    hostname: bank-mailhog.local
-
 bank-accounts:
   image:
     repository: bank-accounts
