@@ -19,3 +19,4 @@ include 'bank-blocker'
 include 'bank-notifications'
 
 include 'clients'
+include 'messaging'

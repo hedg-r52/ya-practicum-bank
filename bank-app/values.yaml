@@ -27,6 +27,8 @@ global:
     client_transfer_uri: http://{{ .Release.Name }}-bank-transfer.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.transfer_port }}/api
     client_blocker_uri: http://{{ .Release.Name }}-bank-blocker.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.blocker_port }}/api
     client_notifications_uri: http://{{ .Release.Name }}-bank-notifications.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.notifications_port }}/api
+  kafka:
+    url: "{{ .Release.Name }}-kafka-broker-0.{{ .Release.Name }}-kafka-broker-headless:9092,{{ .Release.Name }}-kafka-broker-1.{{ .Release.Name }}-kafka-broker-headless:9092"
 
 postgresql:
   image:
@@ -53,6 +55,49 @@ postgresql:
   persistence:
     enabled: true
     size: 500Mi
+
+kafka:
+  kraft:
+    enabled: true
+    clusterId: "bank-app-cluster-id"
+  controller:
+    replicaCount: 2
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 200m
+        memory: 256Mi
+  broker:
+    replicaCount: 2
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+  listeners:
+    client:
+      protocol: PLAINTEXT
+    controller:
+      protocol: PLAINTEXT
+  controllerOnly:
+    enabled: false
+  auth:
+    enabled: false # без SASL/SSL (для dev)
+  networkPolicy:
+    enabled: false
+  provisioning:
+    enabled: true
+    topics:
+      - name: rates
+        partitions: 1
+        replicationFactor: 1
+      - name: notifications
+        partitions: 1
+        replicationFactor: 1
 
 ingress:
   enabled: true

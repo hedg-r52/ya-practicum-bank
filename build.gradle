@@ -12,7 +12,8 @@ java {
 
 subprojects {
     apply plugin: 'java'
-    if (project.name != 'clients') {
+    def excludedProjects = ['clients', 'messaging']
+    if (!excludedProjects.contains(project.name)) {
         apply plugin: 'org.springframework.boot'
     }
     apply plugin: 'io.spring.dependency-management'

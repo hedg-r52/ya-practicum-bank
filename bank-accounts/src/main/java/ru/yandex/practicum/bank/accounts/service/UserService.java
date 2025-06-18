@@ -7,6 +7,8 @@ import ru.yandex.practicum.bank.accounts.dto.user.*;
 public interface UserService {
     Mono<UserResponseDto> findByLogin(FindByLoginRequestDto request);
 
+    Mono<UserResponseDto> findById(Long userId);
+
     Mono<UserResponseDto> findByAccountId(Long accountId);
 
     Mono<UserResponseDto> registerUser(UserRegisterRequestDto request);

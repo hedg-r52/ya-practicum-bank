@@ -31,3 +31,16 @@ spring:
     user: ${POSTGRESQL_USER:postgres}
     password: ${POSTGRESQL_PASSWORD:postgres}
     enabled: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      properties:
+        acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    admin:
+      client-id: bank-accounts
+    consumer:
+      properties:
+        security.protocol: PLAINTEXT

@@ -8,6 +8,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import ru.yandex.practicum.bank.dto.EmailNotificationRequestDto;
 import ru.yandex.practicum.bank.dto.EmailNotificationResponseDto;
+import ru.yandex.practicum.bank.messaging.common.NotificationMessage;
 import ru.yandex.practicum.bank.model.EmailNotification;
 
 @Mapper(
@@ -21,11 +22,12 @@ public abstract class NotificationMapper {
 
     public abstract EmailNotification map(EmailNotificationRequestDto request);
 
+    public abstract EmailNotificationRequestDto map(NotificationMessage notificationMessage);
+
     @AfterMapping
     protected void setSentToFalse(@MappingTarget EmailNotification notification) {
         if (notification.getSent() == null) {
             notification.setSent(false);
         }
     }
-
 }

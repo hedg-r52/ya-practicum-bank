@@ -15,7 +15,7 @@ import ru.yandex.practicum.bank.clients.blocker.dto.DecisionResponse;
 import ru.yandex.practicum.bank.clients.exchange.ExchangeClient;
 import ru.yandex.practicum.bank.clients.exchange.dto.Currency;
 import ru.yandex.practicum.bank.clients.exchange.dto.ExchangeRateResponse;
-import ru.yandex.practicum.bank.clients.notification.NotificationClient;
+import ru.yandex.practicum.bank.messaging.client.NotificationService;
 import ru.yandex.practicum.transfer.dto.TransactionRequestDto;
 import ru.yandex.practicum.transfer.dto.TransactionResponseDto;
 import ru.yandex.practicum.transfer.exception.UnknownTransactionTypeException;
@@ -41,7 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
     private final AccountClient accountClient;
     private final BlockerClient blockerClient;
-    private final NotificationClient notificationClient;
+    private final NotificationService notificationService;
     private final NotificationMapper notificationMapper;
     private final ExchangeClient exchangeClient;
 
@@ -69,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService {
                         }))
                 .map(transactionMapper::map)
                 .onErrorResume(e -> {
-                    log.error("Something Went Wrong");
+                    log.error("Something Went Wrong", e);
                     return Mono.empty();
                 });
     }
@@ -85,6 +85,7 @@ public class TransactionServiceImpl implements TransactionService {
                             if (e instanceof MoneyException) {
                                 transaction.setStatus(TransactionStatus.NOT_ENOUGH_MONEY);
                             } else {
+                                log.error("Error Debug: ", e);
                                 transaction.setStatus(TransactionStatus.FAILED);
                             }
 
@@ -152,7 +153,11 @@ public class TransactionServiceImpl implements TransactionService {
         return accountClient.findUserByAccountId(transaction.getAccountId())
                 .map(userResponse -> notificationMapper.map(transaction, userResponse.getEmail(),
                         userResponse.getLastName() + " " + userResponse.getFirstName()))
-                .flatMap(notificationClient::sendEmailNotification)
+                .flatMap(request -> {
+                    log.info("send notification through kafka: {}", request);
+                    notificationService.send(request.getSubject(), request.getMessage(), request.getRecipient());
+                    return Mono.just(request);
+                })
                 .flatMap(emailNotificationResponse -> {
                     transaction.setNotificationSent(true);
                     return transactionRepository.save(transactionMapper.mapToDb(transaction));

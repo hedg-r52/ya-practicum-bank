@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yandex.practicum.bank.cash.dto.CashTransactionRequestDto;
@@ -25,7 +24,7 @@ import ru.yandex.practicum.bank.clients.accounts.dto.accounts.WithdrawMoneyFromA
 import ru.yandex.practicum.bank.clients.accounts.exception.MoneyException;
 import ru.yandex.practicum.bank.clients.blocker.BlockerClient;
 import ru.yandex.practicum.bank.clients.blocker.dto.DecisionResponse;
-import ru.yandex.practicum.bank.clients.notification.NotificationClient;
+import ru.yandex.practicum.bank.messaging.client.NotificationService;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
     private final AccountClient accountClient;
     private final BlockerClient blockerClient;
-    private final NotificationClient notificationClient;
+    private final NotificationService notificationService;
     private final NotificationMapper notificationMapper;
 
     @Override
@@ -132,7 +131,11 @@ public class TransactionServiceImpl implements TransactionService {
     private Mono<Transaction> sendEmail(Transaction transaction) {
         return accountClient.findUserByAccountId(transaction.getAccountId())
                 .map(userResponse -> notificationMapper.map(transaction, userResponse.getEmail()))
-                .flatMap(notificationClient::sendEmailNotification)
+                .flatMap(request -> {
+                    log.info("send notification through kafka: {}", request);
+                    notificationService.send(request.getSubject(), request.getMessage(), request.getRecipient());
+                    return Mono.just(request);
+                })
                 .flatMap(response -> {
                     transaction.setNotificationSent(true);
                     return transactionRepository.save(transactionMapper.mapToDb(transaction));

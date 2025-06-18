@@ -29,6 +29,19 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${KEYCLOAK_BANK_REALM_URI}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+      properties:
+        acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    admin:
+      client-id: bank-cash
+    consumer:
+      properties:
+        security.protocol: PLAINTEXT
 
 clients:
   accounts:

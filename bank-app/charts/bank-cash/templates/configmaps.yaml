@@ -13,3 +13,4 @@ data:
   CLIENT_ACCOUNTS_URI: {{ tpl .Values.global.clients.client_account_uri . | quote }}
   CLIENT_BLOCKER_URI: {{ tpl .Values.global.clients.client_blocker_uri . | quote }}
   CLIENT_NOTIFICATIONS_URI: {{ tpl .Values.global.clients.client_notifications_uri . | quote }}
+  KAFKA_BOOTSTRAP_SERVERS: {{ tpl .Values.global.kafka.url . | quote }}

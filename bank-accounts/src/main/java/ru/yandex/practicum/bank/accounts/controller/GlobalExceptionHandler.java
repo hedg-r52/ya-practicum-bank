@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.bank.accounts.exception.NotEnoughMoneyException;
 import ru.yandex.practicum.bank.accounts.exception.NotFoundException;
+import ru.yandex.practicum.bank.accounts.exception.NotificationSendException;
 import ru.yandex.practicum.bank.accounts.exception.UserNotFoundException;
 
 @RestControllerAdvice
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler({Exception.class, NotificationSendException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception e, Model model) {
         return ErrorResponse.builder()
