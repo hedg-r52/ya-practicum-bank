@@ -13,6 +13,7 @@ java {
 subprojects {
     apply plugin: 'java'
     def excludedProjects = ['clients', 'messaging']
+
     if (!excludedProjects.contains(project.name)) {
         apply plugin: 'org.springframework.boot'
     }
@@ -31,6 +32,17 @@ subprojects {
         annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
         implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+
+        if (!excludedProjects.contains(project.name)) {
+            // tracing dependencies
+            implementation 'org.springframework.boot:spring-boot-starter-actuator'
+            implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+            implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+            implementation 'io.zipkin.brave:brave-instrumentation-kafka-clients'
+            implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
+            runtimeOnly 'net.logstash.logback:logstash-logback-encoder:7.3'
+        }
 
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'

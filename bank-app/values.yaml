@@ -29,7 +29,8 @@ global:
     client_notifications_uri: http://{{ .Release.Name }}-bank-notifications.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.notifications_port }}/api
   kafka:
     url: "{{ .Release.Name }}-kafka-broker-0.{{ .Release.Name }}-kafka-broker-headless:9092,{{ .Release.Name }}-kafka-broker-1.{{ .Release.Name }}-kafka-broker-headless:9092"
-
+  zipkin:
+    url: "http://{{ .Release.Name }}-zipkin:9411/api/v2/spans"
 postgresql:
   image:
     tag: 17
@@ -98,6 +99,11 @@ kafka:
       - name: notifications
         partitions: 1
         replicationFactor: 1
+
+zipkin:
+  storageType: mem
+  cassandra:
+    enabled: false
 
 ingress:
   enabled: true

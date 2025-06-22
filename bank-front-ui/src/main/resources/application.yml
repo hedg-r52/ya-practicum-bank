@@ -30,3 +30,15 @@ clients:
     uri: ${CLIENT_CASH_URI}
   transfer:
     uri: ${CLIENT_TRANSFER_URI}
+
+management:
+  zipkin:
+    tracing:
+      endpoint:  ${ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

@@ -7,3 +7,4 @@ metadata:
 data:
   CLIENT_EXCHANGE_URI: {{ tpl .Values.global.clients.client_exchange_uri . | quote }}
   KAFKA_BOOTSTRAP_SERVERS: {{ tpl .Values.global.kafka.url . | quote }}
+  ZIPKIN_ENDPOINT: {{ tpl .Values.global.zipkin.url . | quote }}

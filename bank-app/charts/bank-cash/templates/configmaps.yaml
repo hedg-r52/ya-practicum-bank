@@ -14,3 +14,4 @@ data:
   CLIENT_BLOCKER_URI: {{ tpl .Values.global.clients.client_blocker_uri . | quote }}
   CLIENT_NOTIFICATIONS_URI: {{ tpl .Values.global.clients.client_notifications_uri . | quote }}
   KAFKA_BOOTSTRAP_SERVERS: {{ tpl .Values.global.kafka.url . | quote }}
+  ZIPKIN_ENDPOINT: {{ tpl .Values.global.zipkin.url . | quote }}
