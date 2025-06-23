@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "bank-blocker.fullname" . }}
   labels:
+    app: {{ include "bank-blocker.name" . }}
     {{- include "bank-blocker.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -16,6 +17,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        app: {{ include "bank-blocker.name" . }}
         {{- include "bank-blocker.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}

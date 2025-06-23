@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "bank-notifications.fullname" . }}
   labels:
-    {{- include "bank-notifications.labels" . | nindent 4 }}
+    app: {{ include "bank-notifications.name" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "bank-notifications.selectorLabels" . | nindent 4 }}
+    app: {{ include "bank-notifications.name" . }}

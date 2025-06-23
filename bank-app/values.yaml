@@ -105,6 +105,20 @@ zipkin:
   cassandra:
     enabled: false
 
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      serviceMonitorSelector: {}
+      podMonitorSelector: {}
+  grafana:
+    enabled: true
+    adminPassword: "admin"
+    service:
+      type: ClusterIP
+  prometheus-node-exporter:
+    hostRootFsMount:
+      enabled: false
+
 ingress:
   enabled: true
   annotations:

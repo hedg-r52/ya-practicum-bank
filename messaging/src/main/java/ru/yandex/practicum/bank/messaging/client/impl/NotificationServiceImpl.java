@@ -1,8 +1,8 @@
 package ru.yandex.practicum.bank.messaging.client.impl;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.bank.messaging.client.NotificationService;
 import ru.yandex.practicum.bank.messaging.common.NotificationMessage;
 
-import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -21,12 +20,13 @@ import java.util.concurrent.TimeoutException;
 @Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
-    private final ApplicationContext applicationContext;
     private final KafkaTemplate<String, NotificationMessage> kafkaTemplate;
+    private final MeterRegistry meterRegistry;
 
-    public NotificationServiceImpl(ApplicationContext applicationContext, KafkaTemplate<String, NotificationMessage> kafkaTemplate) {
-        this.applicationContext = applicationContext;
+    public NotificationServiceImpl(KafkaTemplate<String, NotificationMessage> kafkaTemplate,
+                                   MeterRegistry meterRegistry) {
         this.kafkaTemplate = kafkaTemplate;
+        this.meterRegistry = meterRegistry;
     }
 
     @Value("${kafka.topic:notifications}")
@@ -51,7 +51,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .build();
         try {
             kafkaTemplate.send(msg).get(kafkaTimeoutSeconds, TimeUnit.SECONDS);
+            meterRegistry.counter("notifications.success", "email", email).increment();
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            meterRegistry.counter("notifications.failed", "email", email).increment();
             log.error("{}:{}", e.getMessage(), e.getCause().getMessage());
             return;
         }

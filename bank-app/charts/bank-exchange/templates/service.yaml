@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "bank-exchange.fullname" . }}
+  labels:
+    app: {{ include "bank-exchange.name" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:

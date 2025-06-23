@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "bank-front-ui.fullname" . }}
   labels:
-    {{- include "bank-front-ui.labels" . | nindent 4 }}
+    app: {{ include "bank-front-ui.name" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "bank-front-ui.selectorLabels" . | nindent 4 }}
+    app: {{ include "bank-front-ui.name" . }}

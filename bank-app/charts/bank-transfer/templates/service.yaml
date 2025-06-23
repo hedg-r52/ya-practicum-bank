@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "bank-transfer.fullname" . }}
   labels:
-    {{- include "bank-transfer.labels" . | nindent 4 }}
+    app: {{ include "bank-transfer.name" . }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "bank-transfer.selectorLabels" . | nindent 4 }}
+    app: {{ include "bank-transfer.name" . }}

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.bank.cash.config;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +15,9 @@ import ru.yandex.practicum.bank.messaging.common.NotificationMessage;
 public class MessagingConfig {
 
     @Bean
-    public NotificationService notificationService(ApplicationContext ctx, KafkaTemplate<String, NotificationMessage> kafkaTemplate) {
-        return new NotificationServiceImpl(ctx, kafkaTemplate);
+    public NotificationService notificationService(KafkaTemplate<String, NotificationMessage> kafkaTemplate,
+                                                   MeterRegistry meterRegistry) {
+        return new NotificationServiceImpl(kafkaTemplate, meterRegistry);
     }
 
     @Bean
