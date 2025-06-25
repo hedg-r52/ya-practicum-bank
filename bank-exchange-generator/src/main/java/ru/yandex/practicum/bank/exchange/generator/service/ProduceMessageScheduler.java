@@ -1,14 +1,12 @@
 package ru.yandex.practicum.bank.exchange.generator.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.yandex.practicum.bank.clients.exchange.ExchangeClient;
-import ru.yandex.practicum.bank.clients.exchange.dto.ExchangeRateResponse;
-import ru.yandex.practicum.bank.exchange.generator.dto.ExchangeRateUpdateRequest;
 import ru.yandex.practicum.bank.exchange.generator.mapper.ExchangeMapper;
 import ru.yandex.practicum.bank.exchange.generator.model.Currency;
 import ru.yandex.practicum.bank.exchange.generator.model.ExchangeRate;
@@ -18,6 +16,7 @@ import ru.yandex.practicum.bank.messaging.exchange.ExchangeRateUpdateMessageItem
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class ProduceMessageScheduler {
@@ -38,7 +37,10 @@ public class ProduceMessageScheduler {
                             rate.getRate()
                     )));
                     rates.setRates(items);
-                    kafkaTemplate.send("rates", rates);
+                    Mono.fromFuture(kafkaTemplate.send("rates", rates))
+                            .doOnNext(result -> log.debug("Sent exchange-rates message: {}", result))
+                            .doOnError(throwable -> log.error("Error sending message: {}", throwable.getMessage()))
+                            .subscribe();
                 })
                 .then();
     }

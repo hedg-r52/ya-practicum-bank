@@ -69,4 +69,16 @@ public class UserResponseDto {
     public void setBirthDate(LocalDateTime birthDate) {
         this.birthDate = birthDate;
     }
+
+    @Override
+    public String toString() {
+        return "UserResponseDto{" +
+                "birthDate=" + birthDate +
+                ", id=" + id +
+                ", login='" + login + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

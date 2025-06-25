@@ -1,6 +1,7 @@
 package ru.yandex.practicum.bank.accounts.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -32,46 +34,70 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UserResponseDto> findByLogin(FindByLoginRequestDto request) {
         return userRepository.findByLogin(request.getLogin())
-                .switchIfEmpty(Mono.error(new UserNotFoundException()))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.debug("User not found by login: {}", request.getLogin());
+                    return new UserNotFoundException();
+                }))
                 .map(userMapper::map);
     }
 
     @Override
     public Mono<UserResponseDto> findById(Long userId) {
         return userRepository.findById(userId)
-                .switchIfEmpty(Mono.error(new UserNotFoundException()))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.debug("User not found by id: {}", userId);
+                    return new UserNotFoundException();
+                }))
                 .map(userMapper::map);
     }
 
     @Override
     public Mono<UserResponseDto> findByAccountId(Long accountId) {
         return userRepository.findByAccountId(accountId)
-                .switchIfEmpty(Mono.error(new UserNotFoundException()))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.debug("User not found by accountId: {}", accountId);
+                    return new UserNotFoundException();
+                }))
                 .map(userMapper::map);
     }
 
     @Override
     public Mono<UserResponseDto> registerUser(UserRegisterRequestDto request) {
+        log.debug("Registering user: {}", request);
         return userRepository.save(userMapper.map(request))
-                .map(userMapper::map);
+                .doOnError(throwable -> log.error("Error registering user: {}", throwable.getMessage()))
+                .map(userMapper::map)
+                .doOnNext(userResponseDto -> log.info("User successfully registered: {}", userResponseDto));
     }
 
     @Override
     public Mono<UserResponseDto> update(Long userId, UserUpdateRequestDto request) {
+        log.debug("Updating user: {}", userId);
         return userRepository.findById(userId)
-                .switchIfEmpty(Mono.error(new UserNotFoundException(userId)))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.debug("User not found by id: {}", userId);
+                    return new UserNotFoundException(userId);
+                }))
                 .map(u -> userMapper.update(request, u))
                 .flatMap(userRepository::save)
-                .map(userMapper::map);
+                .doOnError(throwable -> log.error("Error updating user: {}", throwable.getMessage()))
+                .map(userMapper::map)
+                .doOnNext(userResponseDto -> log.info("User successfully updated: {}", userResponseDto));
     }
 
     @Override
     public Mono<UserResponseDto> changePassword(Long userId, PasswordChangeRequestDto request) {
+        log.debug("Changing password for user: {}", userId);
         return userRepository.findById(userId)
-                .switchIfEmpty(Mono.error(new UserNotFoundException(userId)))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.error("User not found by id: {}", userId);
+                    return new UserNotFoundException(userId);
+                }))
                 .doOnNext(u -> u.setPassword(passwordEncoder.encode(request.getPassword())))
                 .flatMap(userRepository::save)
-                .map(userMapper::map);
+                .doOnError(throwable -> log.error("Error changing password for user: {}", throwable.getMessage()))
+                .map(userMapper::map)
+                .doOnNext(userResponseDto -> log.info("User successfully changed: {}", userResponseDto));
     }
 
     @Override

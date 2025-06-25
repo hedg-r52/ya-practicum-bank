@@ -1,6 +1,7 @@
 package ru.yandex.practicum.bank.accounts.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -20,6 +21,7 @@ import ru.yandex.practicum.bank.accounts.service.AccountService;
 import ru.yandex.practicum.bank.accounts.service.UserService;
 import ru.yandex.practicum.bank.messaging.client.NotificationService;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -36,13 +38,16 @@ public class AccountServiceImpl implements AccountService {
                 request.getUserId(),
                 currency
         );
+        log.debug("Creating account - request received: {}", request);
         return accountRepository.save(account)
+                .doOnError( throwable -> log.error("Error during saving account to database: {}", throwable.getMessage()))
                 .zipWith(userService.findById(request.getUserId()))
                 .doOnNext(tuple -> {
                     var acc = tuple.getT1();
                     var user = tuple.getT2();
                     var msg = "Account with id = " + acc.getId()
                             + " currency = " + acc.getCurrency() + " was created";
+                    log.info("Account was successfully created with id = {} and currency = {}", request.getUserId(), request.getCurrency());
                     notificationService.send("Создание аккаунта", msg, user.getEmail());
                 })
                 .map(tuple -> accountMapper.map(tuple.getT1()));
@@ -51,14 +56,19 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Mono<Void> deleteAccount(Long accountId) {
         return accountRepository.findById(accountId)
-                .switchIfEmpty(Mono.error(new NotFoundException("There is no account with id = " + accountId)))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.error("Account with id = {} not found", accountId);
+                    return new NotFoundException("There is no account with id = " + accountId);
+                }))
                 .flatMap(account -> {
                     if (account.getAmount() != 0) {
+                        log.error("Account with id = {} has insufficient funds", accountId);
                         return Mono.error(new DeletionAccountWithFundsException());
                     }
                     return userService.findByAccountId(accountId)
                             .flatMap(user -> accountRepository.deleteById(accountId)
                                     .then(Mono.fromRunnable(() -> {
+                                        log.info("Account with id = {} deleted", accountId);
                                         String msg = "Account with id = " + accountId
                                                 + " currency = " + account.getCurrency() + " was deleted";
                                         notificationService.send("Удаление аккаунта", msg, user.getEmail());
@@ -80,16 +90,21 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public Mono<AccountResponseDto> depositMoney(Long accountId, Double amount) {
         return accountRepository.findById(accountId)
-                .switchIfEmpty(Mono.error(new NotFoundException("Account with id = " + accountId + " not found")))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.error("Account with id = {} not found", accountId);
+                    return new NotFoundException("Account with id = " + accountId + " not found");
+                }))
                 .flatMap(account -> {
                     account.setAmount(account.getAmount() + amount);
                     return accountRepository.save(account)
                             .zipWith(userService.findById(account.getUserId()));
                 })
+                .doOnError( throwable -> log.error("Error during depositMoney to database: {}", throwable.getMessage()))
                 .flatMap(tuple -> {
                     var acc = tuple.getT1();
                     var user = tuple.getT2();
                     var msg = amount + " were deposited into account with id = " + acc.getId();
+                    log.info("Account with id = {} and currency = {} was successfully deposited", accountId, acc.getCurrency());
                     notificationService.send("Пополнение счёта", msg, user.getEmail());
                     return Mono.just(acc);
                 })
@@ -100,19 +115,25 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public Mono<AccountResponseDto> withdrawMoney(Long accountId, Double amount) {
         return accountRepository.findById(accountId)
-                .switchIfEmpty(Mono.error(new NotFoundException("Account with id = " + accountId + " not found")))
+                .switchIfEmpty(Mono.error(() -> {
+                    log.error("Account with id = {} not found", accountId);
+                    return new NotFoundException("Account with id = " + accountId + " not found");
+                }))
                 .flatMap(account -> {
                     if (account.getAmount() < amount) {
+                        log.error("Account with id = {} has insufficient funds", accountId);
                         return Mono.error(new NotEnoughMoneyException());
                     }
                     account.setAmount(account.getAmount() - amount);
                     return accountRepository.save(account)
                             .zipWith(userService.findById(account.getUserId()));
                 })
+                .doOnError( throwable -> log.error("Error during withdrawMoney to database: {}", throwable.getMessage()))
                 .flatMap(tuple -> {
                     var acc = tuple.getT1();
                     var user = tuple.getT2();
                     var msg = amount + " were withdrew from account with id = " + acc.getId();
+                    log.info("Account with id = {} and currency = {} was successfully withdrawn", accountId, acc.getCurrency());
                     notificationService.send("Списание со счёта", msg, user.getEmail());
                     return Mono.just(acc);
                 })

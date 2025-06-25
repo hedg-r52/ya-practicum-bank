@@ -78,4 +78,17 @@ public abstract class Transaction {
     public void setStatus(TransactionStatus status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "accountId=" + accountId +
+                ", id=" + id +
+                ", amount=" + amount +
+                ", status=" + status +
+                ", notificationSent=" + notificationSent +
+                ", createdAt=" + createdAt +
+                ", modifiedAt=" + modifiedAt +
+                '}';
+    }
 }

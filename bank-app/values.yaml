@@ -105,6 +105,71 @@ zipkin:
   cassandra:
     enabled: false
 
+logstash:
+  imageTag: 8.18.0
+  esJavaOpts: "-Xmx1g -Xms1g"
+  logstashPipeline:
+    monitoring.conf: |
+      input {
+        kafka {
+          bootstrap_servers => "http://bank-app-kafka-controller-0.bank-app-kafka-controller-headless.test.svc.cluster.local:9092,http://bank-app-kafka-controller-1.bank-app-kafka-controller-headless.test.svc.cluster.local:9092,http://bank-app-kafka-controller-2.bank-app-kafka-controller-headless.test.svc.cluster.local:9092"
+          topics => ["input-logs"]
+          group_id => "logs-group"
+        }
+      }
+      filter {
+        grok {
+          match => { "message" => "%{TIME:time} %{LOGLEVEL:log-level}%{SPACE} \[%{DATA:app}/%{DATA:method}/%{DATA:line}/%{DATA:traceId}/%{DATA:spanId}\]: %{GREEDYDATA:msg}" }
+        }
+      }
+      output {
+        elasticsearch {
+          hosts => ["https://elasticsearch:9200"]
+          index => "logs-%{+dd.MM.YYYY}"
+          retry_on_conflict => 3
+          action => "create"
+          ssl_enabled => true
+          ssl_verification_mode => "none"
+        }
+      }
+
+elasticsearch:
+  tls:
+    enabled: false
+  masterService: "elasticsearch"
+  imageTag: 8.18.0
+  replicas: 1
+  minimumMasterNodes: 1
+  esJavaOpts: "-Xmx1g -Xms1g"
+  clusterHealthCheckParams: ""
+  esConfig:
+    elasticsearch.yml: |
+      xpack.security.http.ssl.enabled: false
+      xpack.security.authc:
+        anonymous:
+          username: anonymous_user 
+          roles: superuser
+          authz_exception: true
+
+kibana:
+  enabled: false
+  replicaCount: 1
+  elasticsearchHosts: "https://elasticsearch:9200"
+  elasticsearch:
+    ssl:
+      enabled: false
+  automountToken: false
+  service:
+    type: NodePort
+    nodePort: 32000
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
 kube-prometheus-stack:
   prometheus:
     prometheusSpec:
