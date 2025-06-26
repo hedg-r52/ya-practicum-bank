@@ -66,10 +66,10 @@ kafka:
     resources:
       limits:
         cpu: 500m
-        memory: 512Mi
+        memory: 1Gi
       requests:
         cpu: 200m
-        memory: 256Mi
+        memory: 512Mi
   broker:
     replicaCount: 2
     resources:
@@ -149,39 +149,14 @@ elasticsearch:
   minimumMasterNodes: 1
   esJavaOpts: "-Xmx1g -Xms1g"
   clusterHealthCheckParams: ""
+  security:
+    enabled: true
+    elasticPassword: "elastic"
+    createDefaultSecret: true
   esConfig:
     elasticsearch.yml: |
       xpack.security.http.ssl.enabled: false
-      xpack.security.authc:
-        anonymous:
-          username: anonymous_user 
-          roles: superuser
-          authz_exception: true
-
-kibana:
-  enabled: false
-  extraEnvs:
-    - name: ELASTICSEARCH_USERNAME
-      value: "anonymous_user"
-    - name: ELASTICSEARCH_PASSWORD
-      value: ""
-    - name: SKIP_MANAGE_ES_TOKEN
-      value: "true"
-  enterpriseSearch:
-    enabled: false
-  elasticsearchHosts: "https://elasticsearch:9200"
-  automountToken: false
-  replicaCount: 1
-  service:
-    type: NodePort
-    nodePort: 32000
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
-      cpu: 250m
-      memory: 512Mi
+      xpack.security.enabled: true
 
 kube-prometheus-stack:
   prometheus:

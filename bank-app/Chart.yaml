@@ -53,6 +53,6 @@ dependencies:
     version: 8.5.1
     repository: https://helm.elastic.co
   - name: kibana
-    version: 8.5.1
-    repository: https://helm.elastic.co
+    version: 0.1.0
+    repository: file://charts/kibana
     condition: kibana.enabled
