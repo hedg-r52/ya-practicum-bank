@@ -108,11 +108,19 @@ zipkin:
 logstash:
   imageTag: 8.18.0
   esJavaOpts: "-Xmx1g -Xms1g"
+  extraEnvs:
+    - name: LOGSTASH_SETTING_XPACK_MONITORING_ENABLED
+      value: "false"
+  logstashConfig:
+    logstash.yml: |
+      xpack.monitoring.enabled: false
+      xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch:9200"]
+      xpack.monitoring.elasticsearch.ssl.verification_mode: "none"
   logstashPipeline:
     monitoring.conf: |
       input {
         kafka {
-          bootstrap_servers => "http://bank-app-kafka-controller-0.bank-app-kafka-controller-headless.test.svc.cluster.local:9092,http://bank-app-kafka-controller-1.bank-app-kafka-controller-headless.test.svc.cluster.local:9092,http://bank-app-kafka-controller-2.bank-app-kafka-controller-headless.test.svc.cluster.local:9092"
+          bootstrap_servers => "bank-app-kafka-broker-0.bank-app-kafka-broker-headless:9092,bank-app-kafka-broker-1.bank-app-kafka-broker-headless:9092"
           topics => ["input-logs"]
           group_id => "logs-group"
         }
@@ -132,7 +140,6 @@ logstash:
           ssl_verification_mode => "none"
         }
       }
-
 elasticsearch:
   tls:
     enabled: false
@@ -153,12 +160,18 @@ elasticsearch:
 
 kibana:
   enabled: false
-  replicaCount: 1
+  extraEnvs:
+    - name: ELASTICSEARCH_USERNAME
+      value: "anonymous_user"
+    - name: ELASTICSEARCH_PASSWORD
+      value: ""
+    - name: SKIP_MANAGE_ES_TOKEN
+      value: "true"
+  enterpriseSearch:
+    enabled: false
   elasticsearchHosts: "https://elasticsearch:9200"
-  elasticsearch:
-    ssl:
-      enabled: false
   automountToken: false
+  replicaCount: 1
   service:
     type: NodePort
     nodePort: 32000
