@@ -76,7 +76,7 @@ pipeline {
         stage('Helm Deploy to TEST') {
 			steps {
 					sh """
-					helm upgrade --install bank-app bank-app/. \\
+					helm upgrade --install bank-app-test bank-app/. \\
 					    --namespace test --create-namespace \\
 					    --set postgresql.auth.password=${DB_PASSWORD} \\
 					    --set postgresql.auth.username=${DB_USER} \\
