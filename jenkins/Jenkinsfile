@@ -123,6 +123,7 @@ pipeline {
 					    --set zipkin.enabled=true \\
                         --set zipkin.image.repository=bitnami/zipkin \\
                         --set zipkin.image.tag=3.1.0 \\
+                        --set zipkin.tls.enabled=false \\
                         --set kube-prometheus-stack.enabled=true \\
                         --set kube-prometheus-stack.prometheus.image.repository=quay.io/prometheus/prometheus \\
                         --set kube-prometheus-stack.prometheus.image.tag=v2.52.0 \\
@@ -196,6 +197,7 @@ pipeline {
                     --set zipkin.enabled=true \\
                     --set zipkin.image.repository=bitnami/zipkin \\
                     --set zipkin.image.tag=3.1.0 \\
+                    --set zipkin.tls.enabled=false \\
                     --set kube-prometheus-stack.enabled=true \\
                     --set kube-prometheus-stack.prometheus.image.repository=quay.io/prometheus/prometheus \\
                     --set kube-prometheus-stack.prometheus.image.tag=v2.52.0 \\
