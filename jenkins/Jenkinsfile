@@ -117,7 +117,11 @@ pipeline {
 					    --set bank-mailhog.ingress.hosts[0].host=bank-mailhog.test.local \\
 				    	--set bank-mailhog.ingress.hosts[0].paths[0].path="/" \\
 				    	--set bank-mailhog.ingress.hosts[0].paths[0].pathType="Prefix" \\
-					    --set kafka.auth.enabled=false
+					    --set kafka.auth.enabled=false \\
+					    --set zipkin.enabled=true \\
+                        --set kube-prometheus-stack.enabled=true \\
+                        --set logstash.enabled=true \\
+                        --set elasticsearch.enabled=true
             		"""
                     }
         }
@@ -174,7 +178,11 @@ pipeline {
 				    --set bank-mailhog.ingress.hosts[0].host=bank-mailhog.local \\
 				    --set bank-mailhog.ingress.hosts[0].paths[0].path="/" \\
 				    --set bank-mailhog.ingress.hosts[0].paths[0].pathType="Prefix" \\
-					--set kafka.auth.enabled=false
+					--set kafka.auth.enabled=false \\
+                    --set zipkin.enabled=true \\
+                    --set kube-prometheus-stack.enabled=true \\
+                    --set logstash.enabled=true \\
+                    --set elasticsearch.enabled=true
             	"""
             }
         }
