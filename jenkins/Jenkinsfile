@@ -119,9 +119,21 @@ pipeline {
 				    	--set bank-mailhog.ingress.hosts[0].paths[0].pathType="Prefix" \\
 					    --set kafka.auth.enabled=false \\
 					    --set zipkin.enabled=true \\
+                        --set zipkin.image.repository=bitnami/zipkin \\
+                        --set zipkin.image.tag=3.1.0 \\
                         --set kube-prometheus-stack.enabled=true \\
+                        --set kube-prometheus-stack.prometheus.image.repository=quay.io/prometheus/prometheus \\
+                        --set kube-prometheus-stack.prometheus.image.tag=v2.52.0 \\
+                        --set kube-prometheus-stack.grafana.image.repository=docker.io/grafana/grafana \\
+                        --set kube-prometheus-stack.grafana.image.tag=10.4.1 \\
+                        --set kube-prometheus-stack.alertmanager.image.repository=quay.io/prometheus/alertmanager \\
+                        --set kube-prometheus-stack.alertmanager.image.tag=v0.27.0 \\
                         --set logstash.enabled=true \\
-                        --set elasticsearch.enabled=true
+                        --set logstash.image.repository=docker.elastic.co/logstash/logstash \\
+                        --set logstash.image.tag=8.5.1 \\
+                        --set elasticsearch.enabled=true \\
+                        --set elasticsearch.image.repository=docker.elastic.co/elasticsearch/elasticsearch \\
+                        --set elasticsearch.imageTag=8.5.1
             		"""
                     }
         }
@@ -180,9 +192,21 @@ pipeline {
 				    --set bank-mailhog.ingress.hosts[0].paths[0].pathType="Prefix" \\
 					--set kafka.auth.enabled=false \\
                     --set zipkin.enabled=true \\
+                    --set zipkin.image.repository=bitnami/zipkin \\
+                    --set zipkin.image.tag=3.1.0 \\
                     --set kube-prometheus-stack.enabled=true \\
+                    --set kube-prometheus-stack.prometheus.image.repository=quay.io/prometheus/prometheus \\
+                    --set kube-prometheus-stack.prometheus.image.tag=v2.52.0 \\
+                    --set kube-prometheus-stack.grafana.image.repository=docker.io/grafana/grafana \\
+                    --set kube-prometheus-stack.grafana.image.tag=10.4.1 \\
+                    --set kube-prometheus-stack.alertmanager.image.repository=quay.io/prometheus/alertmanager \\
+                    --set kube-prometheus-stack.alertmanager.image.tag=v0.27.0 \\
                     --set logstash.enabled=true \\
-                    --set elasticsearch.enabled=true
+                    --set logstash.image.repository=docker.elastic.co/logstash/logstash \\
+                    --set logstash.image.tag=8.5.1 \\
+                    --set elasticsearch.enabled=true \\
+                    --set elasticsearch.image.repository=docker.elastic.co/elasticsearch/elasticsearch \\
+                    --set elasticsearch.imageTag=8.5.1
             	"""
             }
         }
