@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "bank-exchange.fullname" . }}-monitor
+  namespace: default
+  labels:
+    release: bank-app
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "bank-exchange.name" . }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: 15s

@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "bank-notifications.fullname" . }}
   labels:
+    app: {{ include "bank-notifications.name" . }}
     {{- include "bank-notifications.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -16,6 +17,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        app: {{ include "bank-notifications.name" . }}
         {{- include "bank-notifications.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}

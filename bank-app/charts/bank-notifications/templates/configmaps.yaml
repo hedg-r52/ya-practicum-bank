@@ -11,3 +11,4 @@ data:
   POSTGRESQL_PASSWORD: {{ .Values.global.postgresql.password | quote }}
   MAILHOG_HOST: {{ tpl .Values.global.uri.mailhog . | quote}}
   KAFKA_BOOTSTRAP_SERVERS: {{ tpl .Values.global.kafka.url . | quote }}
+  ZIPKIN_ENDPOINT: {{ tpl .Values.global.zipkin.url . | quote }}

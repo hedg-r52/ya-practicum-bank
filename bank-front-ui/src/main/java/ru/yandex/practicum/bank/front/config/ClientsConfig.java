@@ -1,6 +1,8 @@
 package ru.yandex.practicum.bank.front.config;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
@@ -27,6 +29,13 @@ public class ClientsConfig {
 
     @Value("${clients.transfer.uri}")
     private String transferUri;
+
+    @Bean
+    public WebClient.Builder webClientBuilder(ObjectProvider<WebClientCustomizer> customizerProvider) {
+        WebClient.Builder builder = WebClient.builder();
+        customizerProvider.orderedStream().forEach(customizer -> customizer.customize(builder));
+        return builder;
+    }
 
     @Bean
     public WebClient webClient(ReactiveOAuth2AuthorizedClientManager manager) {

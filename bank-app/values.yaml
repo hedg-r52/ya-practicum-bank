@@ -29,7 +29,8 @@ global:
     client_notifications_uri: http://{{ .Release.Name }}-bank-notifications.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.ports.notifications_port }}/api
   kafka:
     url: "{{ .Release.Name }}-kafka-broker-0.{{ .Release.Name }}-kafka-broker-headless:9092,{{ .Release.Name }}-kafka-broker-1.{{ .Release.Name }}-kafka-broker-headless:9092"
-
+  zipkin:
+    url: "http://{{ .Release.Name }}-zipkin:9411/api/v2/spans"
 postgresql:
   image:
     tag: 17
@@ -65,10 +66,10 @@ kafka:
     resources:
       limits:
         cpu: 500m
-        memory: 512Mi
+        memory: 1Gi
       requests:
         cpu: 200m
-        memory: 256Mi
+        memory: 512Mi
   broker:
     replicaCount: 2
     resources:
@@ -98,6 +99,113 @@ kafka:
       - name: notifications
         partitions: 1
         replicationFactor: 1
+
+zipkin:
+  enabled: true
+  storageType: mem
+  cassandra:
+    enabled: false
+
+logstash:
+  enabled: true
+  imageTag: 8.18.0
+  esJavaOpts: "-Xmx1g -Xms1g"
+  extraEnvs:
+    - name: LOGSTASH_SETTING_XPACK_MONITORING_ENABLED
+      value: "false"
+  logstashConfig:
+    logstash.yml: |
+      xpack.monitoring.enabled: false
+      xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch:9200"]
+      xpack.monitoring.elasticsearch.ssl.verification_mode: "none"
+  logstashPipeline:
+    monitoring.conf: |
+      input {
+        kafka {
+          bootstrap_servers => "bank-app-kafka-broker-0.bank-app-kafka-broker-headless:9092,bank-app-kafka-broker-1.bank-app-kafka-broker-headless:9092"
+          topics => ["input-logs"]
+          group_id => "logs-group"
+        }
+      }
+      filter {
+        grok {
+          match => { "message" => "%{TIME:time} %{LOGLEVEL:log-level}%{SPACE} \[%{DATA:app}/%{DATA:method}/%{DATA:line}/%{DATA:traceId}/%{DATA:spanId}\]: %{GREEDYDATA:msg}" }
+        }
+      }
+      output {
+        elasticsearch {
+          hosts => ["https://elasticsearch:9200"]
+          index => "logs-%{+dd.MM.YYYY}"
+          retry_on_conflict => 3
+          action => "create"
+          ssl_enabled => true
+          ssl_verification_mode => "none"
+        }
+      }
+elasticsearch:
+  enabled: true
+  tls:
+    enabled: false
+  masterService: "elasticsearch"
+  imageTag: 8.18.0
+  replicas: 1
+  minimumMasterNodes: 1
+  esJavaOpts: "-Xmx1g -Xms1g"
+  clusterHealthCheckParams: ""
+  security:
+    enabled: true
+    elasticPassword: "elastic"
+    createDefaultSecret: true
+  esConfig:
+    elasticsearch.yml: |
+      xpack.security.http.ssl.enabled: false
+      xpack.security.enabled: true
+
+kibana:
+  enabled: false
+  replicaCount: 1
+  elasticsearchHosts: "https://elasticsearch:9200"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  service:
+    type: NodePort
+    nodePort: 32000
+  ingress:
+    enabled: true
+    className: "nginx"
+    hosts:
+      - host: kibana.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+  env:
+    - name: ELASTICSEARCH_USERNAME
+      value: "kibana_system"
+    - name: ELASTICSEARCH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: elastic-credentials
+          key: kibana_password
+
+kube-prometheus-stack:
+  enabled: true
+  prometheus:
+    prometheusSpec:
+      serviceMonitorSelector: {}
+      podMonitorSelector: {}
+  grafana:
+    enabled: true
+    adminPassword: "admin"
+    service:
+      type: ClusterIP
+  prometheus-node-exporter:
+    hostRootFsMount:
+      enabled: false
 
 ingress:
   enabled: true

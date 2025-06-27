@@ -10,4 +10,4 @@ data:
   CLIENT_EXCHANGE_URI: {{ tpl .Values.global.clients.client_exchange_uri . | quote }}
   CLIENT_CASH_URI: {{ tpl .Values.global.clients.client_cash_uri . | quote }}
   CLIENT_TRANSFER_URI: {{ tpl .Values.global.clients.client_transfer_uri . | quote }}
-
+  ZIPKIN_ENDPOINT: {{ tpl .Values.global.zipkin.url . | quote }}

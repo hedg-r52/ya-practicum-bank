@@ -25,4 +25,12 @@ public class ExchangeRateUpdateMessageItem {
     public void setRate(Double rate) {
         this.rate = rate;
     }
+
+    @Override
+    public String toString() {
+        return "ExchangeRateUpdateMessageItem{" +
+                "currency='" + currency + '\'' +
+                ", rate=" + rate +
+                '}';
+    }
 }

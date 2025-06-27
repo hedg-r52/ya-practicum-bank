@@ -6,3 +6,4 @@ metadata:
     {{- include "bank-blocker.labels" . | nindent 4 }}
 data:
   KEYCLOAK_ISSUER_URI: {{ tpl .Values.global.uri.keycloak_issuer . | quote }}
+  ZIPKIN_ENDPOINT: {{ tpl .Values.global.zipkin.url . | quote }}

@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "bank-cash.fullname" . }}
   labels:
+    app: {{ include "bank-cash.name" . }}
     {{- include "bank-cash.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -16,6 +17,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        app: {{ include "bank-cash.name" . }}
         {{- include "bank-cash.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}

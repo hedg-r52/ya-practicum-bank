@@ -65,6 +65,8 @@ pipeline {
 			steps {
 				sh """
 				helm repo add bitnami https://charts.bitnami.com/bitnami
+				helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+                helm repo add elastic https://helm.elastic.co
             	helm repo update
 				helm dependency build bank-app/
 				"""
@@ -74,7 +76,7 @@ pipeline {
         stage('Helm Deploy to TEST') {
 			steps {
 					sh """
-					helm upgrade --install bank-app bank-app/. \\
+					helm upgrade --install bank-app-test bank-app/. \\
 					    --namespace test --create-namespace \\
 					    --set postgresql.auth.password=${DB_PASSWORD} \\
 					    --set postgresql.auth.username=${DB_USER} \\
@@ -117,7 +119,15 @@ pipeline {
 					    --set bank-mailhog.ingress.hosts[0].host=bank-mailhog.test.local \\
 				    	--set bank-mailhog.ingress.hosts[0].paths[0].path="/" \\
 				    	--set bank-mailhog.ingress.hosts[0].paths[0].pathType="Prefix" \\
-					    --set kafka.auth.enabled=false
+					    --set kafka.auth.enabled=false \\
+                        --set zipkin.enabled=true \\
+                        --set zipkin.tls.enabled=false \\
+                        --set kube-prometheus-stack.enabled=true \\
+                        --set logstash.enabled=true \\
+                        --set elasticsearch.enabled=true \\
+                        --set elasticsearch.security.enabled=true \\
+                        --set elasticsearch.security.elasticPassword=\"elastic\" \\
+                        --set elasticsearch.security.createDefaultSecret=true
             		"""
                     }
         }
@@ -174,7 +184,15 @@ pipeline {
 				    --set bank-mailhog.ingress.hosts[0].host=bank-mailhog.local \\
 				    --set bank-mailhog.ingress.hosts[0].paths[0].path="/" \\
 				    --set bank-mailhog.ingress.hosts[0].paths[0].pathType="Prefix" \\
-					--set kafka.auth.enabled=false
+					--set kafka.auth.enabled=false \\
+                    --set zipkin.enabled=true \\
+                    --set zipkin.tls.enabled=false \\
+                    --set kube-prometheus-stack.enabled=true \\
+                    --set logstash.enabled=true \\
+                    --set elasticsearch.enabled=true \\
+                    --set elasticsearch.security.enabled=true \\
+                    --set elasticsearch.security.elasticPassword=\"elastic\" \\
+                    --set elasticsearch.security.createDefaultSecret=true
             	"""
             }
         }

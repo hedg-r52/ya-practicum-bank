@@ -42,6 +42,8 @@ spring:
     consumer:
       properties:
         security.protocol: PLAINTEXT
+    template:
+      observation-enabled: true
 
 clients:
   accounts:
@@ -52,10 +54,14 @@ clients:
     uri: ${CLIENT_NOTIFICATIONS_URI}
 
 management:
+  zipkin:
+    tracing:
+      endpoint:  ${ZIPKIN_ENDPOINT}
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1
   endpoints:
     web:
       exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: always
+        include: health,info,prometheus

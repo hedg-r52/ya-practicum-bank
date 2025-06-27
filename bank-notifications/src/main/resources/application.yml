@@ -37,3 +37,18 @@ spring:
       group-id: notifications-group
       properties:
         spring.json.trusted.packages: ru.yandex.practicum.bank.*
+    listener:
+      observation-enabled: true
+
+management:
+  zipkin:
+    tracing:
+      endpoint:  ${ZIPKIN_ENDPOINT}
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

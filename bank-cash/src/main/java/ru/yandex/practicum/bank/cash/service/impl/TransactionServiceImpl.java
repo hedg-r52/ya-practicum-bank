@@ -1,7 +1,7 @@
 package ru.yandex.practicum.bank.cash.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -30,7 +30,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Log4j2
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
@@ -56,15 +56,17 @@ public class TransactionServiceImpl implements TransactionService {
                 .findByStatus(TransactionStatus.CREATED)
                 .map(transactionMapper::map)
                 .flatMap(transaction -> validate(transaction)
+                        .doOnError( throwable -> log.error("Error during transaction validation: {}", throwable.getMessage()))
                         .flatMap(decisionResponse -> {
                             transaction.setStatus(decisionResponse.isBlocked() ?
                                     TransactionStatus.BLOCKED :
                                     TransactionStatus.APPROVED);
-                            return transactionRepository.save(transactionMapper.mapToDb(transaction));
+                            return transactionRepository.save(transactionMapper.mapToDb(transaction))
+                                    .doOnError(throwable -> log.error("Error saving validated transaction: {}", throwable.getMessage()));
                         }))
                 .map(transactionMapper::map)
                 .onErrorResume(e -> {
-                    log.error("Something Went Wrong: " + e.getMessage());
+                    log.error("Something Went Wrong: {}", e.getMessage());
                     return Mono.empty();
                 });
     }
@@ -91,7 +93,8 @@ public class TransactionServiceImpl implements TransactionService {
                             return transactionRepository.save(transactionMapper.mapToDb(transaction));
                         })
                 )
-                .map(transactionMapper::map);
+                .map(transactionMapper::map)
+                .doOnNext(transaction -> log.info("Transaction created: {} ", transaction));
     }
 
     @Scheduled(fixedDelay = 3000)
@@ -101,10 +104,13 @@ public class TransactionServiceImpl implements TransactionService {
                         List.of(TransactionStatus.BLOCKED, TransactionStatus.COMPLETED,
                                 TransactionStatus.FAILED, TransactionStatus.NOT_ENOUGH_MONEY), false)
                 .map(transactionMapper::map)
-                .flatMap(this::sendEmail);
+                .flatMap(this::sendEmail)
+                .doOnError(throwable -> log.error("Error sending notification: {}", throwable.getMessage()))
+                .doOnNext(transaction -> log.debug("Notification successfully sent. Transaction: {} ", transaction));
     }
 
     private Mono<DecisionResponse> validate(Transaction transaction) {
+        log.debug("Validating transaction started: {}", transaction);
         return switch (transaction) {
             case DepositTransaction depositTransaction ->
                     blockerClient.validate(transactionMapper.map(depositTransaction));

@@ -21,3 +21,18 @@ spring:
     consumer:
       properties:
         security.protocol: PLAINTEXT
+    template:
+      observation-enabled: true
+
+management:
+  zipkin:
+    tracing:
+      endpoint:  ${ZIPKIN_ENDPOINT}
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

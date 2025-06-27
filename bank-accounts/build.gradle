@@ -12,6 +12,7 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation project(':clients')
     implementation project(':messaging')
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
     implementation 'org.liquibase:liquibase-core'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
