@@ -101,11 +101,13 @@ kafka:
         replicationFactor: 1
 
 zipkin:
+  enabled: true
   storageType: mem
   cassandra:
     enabled: false
 
 logstash:
+  enabled: true
   imageTag: 8.18.0
   esJavaOpts: "-Xmx1g -Xms1g"
   extraEnvs:
@@ -141,6 +143,7 @@ logstash:
         }
       }
 elasticsearch:
+  enabled: true
   tls:
     enabled: false
   masterService: "elasticsearch"
@@ -190,6 +193,7 @@ kibana:
           key: kibana_password
 
 kube-prometheus-stack:
+  enabled: true
   prometheus:
     prometheusSpec:
       serviceMonitorSelector: {}
